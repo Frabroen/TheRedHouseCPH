@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#8B1A1A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Red House">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<title>The Red House</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red-deep:#6B1010;--red:#8B1A1A;--red-mid:#A52020;
+  --red-pale:#F5E8E8;--red-tint:#FDF0F0;
+  --white:#FFFFFF;--linen:#F2EDE6;--linen2:#E8E0D6;
+  --blue-dk:#174EA6;
+  --ink:#1C1009;--ink2:#4A3728;--ink3:#8A7060;
+  --border:#D4C4B8;--border-light:#EBE2D8;
+  --green:#2D6A4F;--green2:#D8F3DC;
+  --orange:#C05C00;--orange2:#FFF0E0;
+  --radius:10px;--radius-sm:6px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:var(--linen);color:var(--ink);max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+.header{background:var(--red);flex-shrink:0;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 14px,rgba(0,0,0,0.06) 14px,rgba(0,0,0,0.06) 15px),repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px);pointer-events:none}
+.header-frame-top{height:5px;background:var(--white);position:relative;z-index:2}
+.header-inner{padding:11px 14px 9px;position:relative;z-index:2}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.app-brand{display:flex;align-items:center;gap:9px}
+.dannebrog{width:30px;height:21px;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.35);border-radius:2px;overflow:hidden}
+.app-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:#fff;line-height:1}
+.app-sub{font-size:9px;color:rgba(255,255,255,0.5);letter-spacing:0.8px;text-transform:uppercase;margin-top:1px}
+.header-actions{display:flex;align-items:center;gap:6px}
+.hdr-btn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.75);padding:5px;border-radius:6px;-webkit-tap-highlight-color:transparent;display:flex;align-items:center}
+.hdr-btn:active{background:rgba(255,255,255,0.15)}
+.hdr-btn i{font-size:20px}
+.flat-chip{font-size:11px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.12);padding:4px 9px;border-radius:20px;cursor:pointer;border:0.5px solid rgba(255,255,255,0.2);white-space:nowrap}
+.year-row{display:flex;align-items:center;justify-content:space-between}
+.year-bar{display:flex;align-items:center;background:rgba(0,0,0,0.2);border-radius:6px;padding:2px;border:0.5px solid rgba(255,255,255,0.12)}
+.year-btn{background:none;border:none;color:rgba(255,255,255,0.8);cursor:pointer;padding:3px 8px;font-size:15px;border-radius:4px;-webkit-tap-highlight-color:transparent}
+.year-btn:active{background:rgba(255,255,255,0.15)}
+.year-label{font-size:13px;font-weight:600;color:#fff;min-width:36px;text-align:center}
+.sync-bar{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.45)}
+.sync-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;flex-shrink:0}
+.sync-dot.syncing{background:#facc15;animation:pulse 1s infinite}
+.sync-dot.offline{background:#f87171}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes popIn{0%{transform:scale(0.6);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes slideCheckIn{0%{transform:translateX(-8px);opacity:0}100%{transform:translateX(0);opacity:1}}
+@keyframes sparkleFloat{0%{transform:translateY(0) translateX(0) scale(1);opacity:1}100%{transform:translateY(-50px) translateX(var(--tx,0px)) scale(0);opacity:0}}
+@keyframes rowGlow{0%{background:var(--green2)}60%{background:var(--green2)}100%{background:transparent}}
+@keyframes celebPop{0%,100%{transform:scale(1)}30%{transform:scale(1.06)}60%{transform:scale(0.97)}}
+
+/* Done row in year list */
+.yr-row.is-done{opacity:0.5}
+.yr-row.is-done .yr-person-pill{text-decoration:line-through;filter:saturate(0.3)}
+.yr-row.is-done .yr-wk-num{color:var(--ink3)!important}
+.yr-row.is-done .yr-dates{color:var(--border)}
+
+/* Done row glow animation on new render */
+.yr-row.just-done{animation:rowGlow 1.8s ease forwards}
+
+/* Confetti particle */
+.confetti-dot{position:absolute;width:7px;height:7px;border-radius:50%;pointer-events:none;animation:sparkleFloat 0.9s ease forwards}
+
+/* Cleaner card celebrate */
+.cleaner-card.celebrating{animation:celebPop 0.5s ease}
+.header-frame-bottom{height:4px;background:linear-gradient(to right,var(--white) 0%,var(--white) 35%,var(--blue-dk) 35%,var(--blue-dk) 65%,var(--white) 65%);position:relative;z-index:2}
+
+/* ── LAYOUT ── */
+.content{flex:1;overflow-y:auto;padding:12px 12px 14px;-webkit-overflow-scrolling:touch}
+.section{display:none}
+.section.active{display:block}
+
+/* ── NAV (4 items) ── */
+.nav{background:var(--white);border-top:3px solid var(--red);display:flex;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 10px;border:none;background:none;cursor:pointer;color:var(--ink3);font-size:10px;font-weight:500;transition:color 0.15s;-webkit-tap-highlight-color:transparent}
+.nav-btn.active{color:var(--red)}
+.nav-btn i{font-size:21px}
+
+/* ── WEEK NAV ── */
+.week-nav{display:flex;align-items:center;gap:7px;margin-bottom:11px;background:var(--white);border-radius:var(--radius);border:0.5px solid var(--border);padding:7px 9px;box-shadow:0 1px 3px rgba(107,16,16,0.05)}
+.week-nav-btn{background:none;border:0.5px solid var(--border);color:var(--ink2);cursor:pointer;padding:3px 9px;border-radius:var(--radius-sm);font-size:14px;-webkit-tap-highlight-color:transparent}
+.week-nav-btn:active{background:var(--red-pale)}
+.week-label-text{flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--ink)}
+.week-today-btn{background:var(--red-pale);color:var(--red);border:0.5px solid var(--red-mid);cursor:pointer;padding:3px 9px;border-radius:var(--radius-sm);font-size:10px;font-weight:600;-webkit-tap-highlight-color:transparent}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--radius);border:0.5px solid var(--border);padding:11px 13px;margin-bottom:9px;box-shadow:0 1px 3px rgba(107,16,16,0.04)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;padding-bottom:7px;border-bottom:0.5px solid var(--border-light)}
+.card-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink3)}
+
+/* ── CLEANER CARD ── */
+.cleaner-card{background:var(--white);border-radius:var(--radius);border:0.5px solid var(--border);padding:16px 14px 14px;margin-bottom:9px;box-shadow:0 1px 3px rgba(107,16,16,0.05);text-align:center;position:relative}
+.cleaner-card.is-current{border-color:var(--red);border-width:1.5px}
+.cleaner-week-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink3);margin-bottom:10px}
+.cleaner-avatar{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;margin:0 auto 8px;box-shadow:0 0 0 2px var(--border)}
+.cleaner-name{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.cleaner-duty{font-size:11px;color:var(--ink3)}
+.cleaner-done-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green2);color:var(--green);font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;margin-top:9px;border:0.5px solid rgba(45,106,79,0.2)}
+.mark-done-btn{margin-top:10px;background:none;border:1px solid var(--border);color:var(--ink2);cursor:pointer;padding:6px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;-webkit-tap-highlight-color:transparent;font-family:'Inter',sans-serif}
+.mark-done-btn:active{background:var(--green2);border-color:var(--green);color:var(--green)}
+
+/* ── COMMENT AREA ── */
+.comment-area{margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border-light);text-align:left}
+.comment-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--ink3);margin-bottom:5px}
+.comment-input{width:100%;border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;font-size:12px;color:var(--ink);font-family:'Inter',sans-serif;outline:none;resize:none;background:var(--linen)}
+.comment-input:focus{border-color:var(--red)}
+.comment-save-btn{margin-top:5px;background:var(--red-pale);color:var(--red);border:none;cursor:pointer;padding:5px 12px;border-radius:var(--radius-sm);font-size:11px;font-weight:600;font-family:'Inter',sans-serif}
+
+/* ── HOLIDAY STRIP ── */
+.holiday-strip{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border-light)}
+.holiday-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;color:#fff;cursor:pointer;opacity:0.9}
+.holiday-chip.off{opacity:0.35;filter:grayscale(0.4)}
+.holiday-chip i{font-size:11px}
+
+/* ── YEAR LIST ── */
+.yr-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border-light);cursor:pointer;transition:background 0.1s;border-radius:4px;margin:0 -2px;padding:6px 2px}
+.yr-row:last-child{border-bottom:none}
+.yr-row:active{background:var(--red-tint)}
+.yr-row.is-current-wk .yr-wk-num{color:var(--red);font-weight:700}
+.yr-row.is-current-wk{background:var(--red-tint)}
+.yr-row.is-viewing{outline:1.5px solid var(--red);outline-offset:-1px;border-radius:4px}
+.yr-wk-num{font-size:10px;color:var(--ink3);width:32px;flex-shrink:0;text-align:right;font-weight:500}
+.yr-dates{font-size:9px;color:var(--ink3);width:62px;flex-shrink:0}
+.yr-person-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;color:#fff;font-size:11px;font-weight:600;flex:1;min-width:0}
+.yr-icons{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.yr-done-check{color:var(--green);font-size:14px}
+.yr-holiday-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.yr-comment-dot{color:var(--ink3);font-size:12px}
+.yr-swap-icon{color:var(--orange);font-size:12px}
+
+/* ── DRAG AND DROP ── */
+.yr-row.drag-over{background:var(--red-pale);outline:2px dashed var(--red);outline-offset:-2px}
+.yr-row.dragging{opacity:0.4}
+
+/* ── TASKS ── */
+.task-item{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:0.5px solid var(--border-light)}
+.task-item:last-child{border-bottom:none;padding-bottom:0}
+.task-check{width:21px;height:21px;border-radius:5px;border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;margin-top:1px;-webkit-tap-highlight-color:transparent}
+.task-check.done{background:var(--green);border-color:var(--green)}
+.task-check.done i{color:#fff;font-size:12px}
+.task-info{flex:1;min-width:0}
+.task-name{font-size:13px;font-weight:500;color:var(--ink);line-height:1.3}
+.task-name.done{text-decoration:line-through;color:var(--ink3)}
+.task-meta{font-size:10px;color:var(--ink3);margin-top:3px}
+.avatar-sm{width:19px;height:19px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#fff;border:1.5px solid var(--white);margin-right:-3px;flex-shrink:0}
+.urgency-pill{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;flex-shrink:0;background:var(--red-pale);color:var(--red)}
+.task-del{background:none;border:none;cursor:pointer;color:var(--ink3);padding:2px;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+
+/* ── EXPENSES ── */
+.month-tabs{display:flex;gap:3px;overflow-x:auto;padding-bottom:3px;margin-bottom:11px;scrollbar-width:none}
+.month-tabs::-webkit-scrollbar{display:none}
+.month-tab{flex-shrink:0;padding:4px 10px;border-radius:20px;border:0.5px solid var(--border);background:var(--white);cursor:pointer;font-size:11px;font-weight:500;color:var(--ink2);-webkit-tap-highlight-color:transparent}
+.month-tab.active{background:var(--red);color:#fff;border-color:var(--red)}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:11px}
+.stat-card{background:var(--white);border-radius:var(--radius-sm);border:0.5px solid var(--border);padding:10px 12px}
+.stat-card.accent{background:var(--red);border-color:var(--red)}
+.stat-card.accent .stat-label,.stat-card.accent .stat-sub{color:rgba(255,255,255,0.6)}
+.stat-card.accent .stat-value{color:#fff}
+.stat-label{font-size:10px;color:var(--ink3);margin-bottom:2px;text-transform:uppercase;letter-spacing:0.4px}
+.stat-value{font-size:18px;font-weight:700;color:var(--ink);line-height:1.2;font-family:'Playfair Display',serif}
+.stat-sub{font-size:9px;color:var(--ink3);margin-top:1px}
+.expense-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:0.5px solid var(--border-light)}
+.expense-item:last-child{border-bottom:none;padding-bottom:0}
+.expense-icon{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.expense-info{flex:1;min-width:0}
+.expense-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.expense-detail{font-size:10px;color:var(--ink3);margin-top:1px}
+.expense-amount{font-size:13px;font-weight:700;color:var(--ink);flex-shrink:0;font-family:'Playfair Display',serif}
+.month-divider{font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.6px;padding:7px 0 4px;border-bottom:0.5px solid var(--border-light);display:flex;justify-content:space-between}
+
+/* ── BALANCE TOGGLE ── */
+.balance-toggle-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px;background:var(--linen);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:11px;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+.balance-toggle-btn:active{background:var(--red-pale);color:var(--red)}
+.balance-panel{display:none}
+.balance-panel.open{display:block}
+.balance-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border-light)}
+.balance-row:last-child{border-bottom:none;padding-bottom:0}
+.balance-person{display:flex;align-items:center;gap:7px}
+.balance-amount{font-size:13px;font-weight:700;font-family:'Playfair Display',serif}
+.positive{color:var(--green)}
+.negative{color:var(--red)}
+.debt-arrow{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--orange2);border-radius:var(--radius-sm);margin-bottom:5px;font-size:11px;border:0.5px solid rgba(192,92,0,0.12)}
+.debt-arrow:last-child{margin-bottom:0}
+.debt-amt{font-weight:700;color:var(--orange);margin-left:auto;font-family:'Playfair Display',serif}
+
+/* ── GOOD NEWS ── */
+.gn-item{padding:11px 0;border-bottom:0.5px solid var(--border-light);display:flex;gap:9px;align-items:flex-start}
+.gn-item:last-child{border-bottom:none}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:68px;right:50%;transform:translateX(calc(50% + 145px));width:48px;height:48px;border-radius:50%;background:var(--red);color:#fff;border:3px solid var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 12px rgba(107,16,16,0.4);transition:transform 0.1s;-webkit-tap-highlight-color:transparent;z-index:5}
+.fab:active{transform:translateX(calc(50% + 145px)) scale(0.91)}
+
+/* ── MODALS ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(28,16,9,0.6);z-index:20;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--white);border-radius:16px 16px 0 0;border-top:4px solid var(--red);padding:16px 16px 28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative}
+.modal-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:12px;text-align:center;color:var(--ink)}
+.modal-tabs{display:flex;background:var(--linen);border-radius:var(--radius-sm);padding:3px;margin-bottom:12px;gap:2px}
+.modal-tab{flex:1;padding:6px;text-align:center;border-radius:4px;border:none;background:none;cursor:pointer;font-size:12px;font-weight:500;color:var(--ink2);-webkit-tap-highlight-color:transparent}
+.modal-tab.active{background:var(--white);color:var(--red);font-weight:600}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:10px;font-weight:600;color:var(--ink3);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.4px}
+.field input,.field select,.field textarea{width:100%;padding:9px 11px;border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--ink);background:var(--white);outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red)}
+.who-grid{display:flex;gap:5px;flex-wrap:wrap}
+.who-chip{padding:5px 11px;border-radius:20px;border:1.5px solid var(--border);cursor:pointer;font-size:12px;font-weight:500;transition:all 0.12s;background:none;color:var(--ink2);-webkit-tap-highlight-color:transparent}
+.who-chip.sel{border-color:var(--red);background:var(--red-pale);color:var(--red)}
+.btn-primary{width:100%;padding:12px;background:var(--red);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;font-family:'Inter',sans-serif}
+.btn-primary:active{background:var(--red-deep)}
+.btn-close{position:absolute;top:13px;right:13px;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:20px;padding:3px;-webkit-tap-highlight-color:transparent}
+
+/* ── SETTINGS MODAL (full-height sheet) ── */
+.settings-modal{background:var(--white);border-radius:16px 16px 0 0;border-top:4px solid var(--red);padding:16px 16px 40px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;position:relative}
+.config-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--border-light)}
+.config-row:last-child{border-bottom:none}
+.config-label{font-size:13px;font-weight:500}
+.config-sub{font-size:10px;color:var(--ink3);margin-top:1px}
+.toggle{width:38px;height:21px;background:var(--border);border-radius:11px;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle.on{background:var(--red)}
+.toggle::after{content:'';position:absolute;top:2.5px;left:2.5px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle.on::after{transform:translateX(17px)}
+.rm-cfg-item{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:0.5px solid var(--border-light)}
+.rm-cfg-item:last-child{border-bottom:none}
+.add-btn{display:flex;align-items:center;gap:6px;padding:8px 0 0;color:var(--red);cursor:pointer;font-size:13px;font-weight:500;background:none;border:none;width:100%}
+
+/* ── TOAST ── */
+#toast{display:none;position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:7px 16px;border-radius:20px;font-size:12px;z-index:40;white-space:nowrap;pointer-events:none}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:24px 16px;color:var(--ink3)}
+.empty i{font-size:28px;margin-bottom:6px;display:block;opacity:0.3}
+
+/* ══ ONBOARDING SCREEN ══════════════════════════════ */
+#onboarding{
+  position:fixed;inset:0;z-index:100;
+  background:var(--red);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+#onboarding.hidden{display:none}
+
+.ob-house{
+  width:100%;max-width:480px;
+  background:var(--red);
+  padding:32px 24px 0;
+  text-align:center;
+  position:relative;
+  flex-shrink:0;
+}
+.ob-house::before{
+  content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 14px,rgba(0,0,0,0.06) 14px,rgba(0,0,0,0.06) 15px),
+    repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px);
+  pointer-events:none;
+}
+.ob-flag{display:flex;justify-content:center;margin-bottom:14px;position:relative;z-index:1}
+.ob-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;letter-spacing:-0.3px;position:relative;z-index:1;line-height:1.1}
+.ob-sub{font-size:12px;color:rgba(255,255,255,0.6);letter-spacing:0.8px;text-transform:uppercase;margin-top:6px;position:relative;z-index:1}
+
+.ob-panel{
+  width:100%;max-width:480px;
+  background:var(--linen);
+  border-radius:20px 20px 0 0;
+  flex:1;
+  padding:24px 20px 40px;
+  margin-top:20px;
+}
+
+/* Step pages within onboarding */
+.ob-step{display:none}
+.ob-step.active{display:block}
+
+.ob-choice-row{display:flex;gap:10px;margin-bottom:6px}
+.ob-choice-btn{
+  flex:1;padding:16px 10px;
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  cursor:pointer;text-align:center;
+  transition:all 0.15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.ob-choice-btn:active,.ob-choice-btn.selected{border-color:var(--red);background:var(--red-pale)}
+.ob-choice-btn i{font-size:28px;color:var(--red);display:block;margin-bottom:6px}
+.ob-choice-btn .ob-choice-label{font-size:13px;font-weight:600;color:var(--ink)}
+.ob-choice-btn .ob-choice-sub{font-size:10px;color:var(--ink3);margin-top:2px}
+
+.ob-section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.ob-section-sub{font-size:12px;color:var(--ink3);margin-bottom:18px}
+
+.ob-field{margin-bottom:12px}
+.ob-field label{display:block;font-size:10px;font-weight:600;color:var(--ink3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.ob-field input{width:100%;padding:11px 13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:15px;color:var(--ink);background:var(--white);outline:none;font-family:'Inter',sans-serif}
+.ob-field input:focus{border-color:var(--red)}
+.ob-field input.code-input{font-size:22px;font-weight:700;letter-spacing:6px;text-align:center;text-transform:uppercase}
+
+.ob-btn{
+  width:100%;padding:13px;background:var(--red);color:#fff;
+  border:none;border-radius:var(--radius-sm);
+  font-size:14px;font-weight:600;cursor:pointer;
+  font-family:'Inter',sans-serif;margin-top:4px;
+  -webkit-tap-highlight-color:transparent;
+}
+.ob-btn:active{background:var(--red-deep)}
+.ob-btn.secondary{background:none;color:var(--red);border:1.5px solid var(--red);margin-top:8px}
+
+/* Member list in onboarding */
+.ob-members{margin:12px 0}
+.ob-member-row{
+  display:flex;align-items:center;gap:10px;
+  background:var(--white);border-radius:var(--radius-sm);
+  border:0.5px solid var(--border);
+  padding:9px 12px;margin-bottom:6px;
+}
+.ob-member-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.ob-member-name{flex:1;font-size:13px;font-weight:500}
+.ob-member-del{background:none;border:none;cursor:pointer;color:var(--ink3);padding:2px;font-size:16px;-webkit-tap-highlight-color:transparent}
+.ob-add-member{display:flex;gap:8px;margin-top:4px}
+.ob-add-member input{flex:1;padding:9px 12px;border:0.5px dashed var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--ink);background:var(--white);outline:none;font-family:'Inter',sans-serif}
+.ob-add-member input:focus{border-color:var(--red);border-style:solid}
+.ob-add-member button{padding:9px 14px;background:var(--red-pale);color:var(--red);border:0.5px solid var(--red);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;font-family:'Inter',sans-serif}
+
+/* Code display */
+.ob-code-display{
+  background:var(--white);border-radius:var(--radius);
+  border:0.5px solid var(--border);
+  padding:20px;text-align:center;margin:14px 0;
+}
+.ob-code-val{font-size:36px;font-weight:700;letter-spacing:8px;color:var(--red);font-family:'Playfair Display',serif}
+.ob-code-hint{font-size:11px;color:var(--ink3);margin-top:6px}
+
+/* Back link */
+.ob-back{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:12px;margin-bottom:14px;padding:0;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+
+/* Entrance animation */
+@keyframes obSlideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.ob-panel{animation:obSlideUp 0.35s ease}
+
+
+/* ── MEMBER MANAGEMENT MODALS ── */
+.member-modal{background:var(--white);border-radius:16px 16px 0 0;border-top:4px solid var(--red);padding:18px 18px 32px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;position:relative}
+.balance-settle-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--linen);border-radius:var(--radius-sm);margin-bottom:6px}
+.balance-settle-row:last-child{margin-bottom:0}
+.settle-amount{font-size:15px;font-weight:700;font-family:'Playfair Display',serif}
+.option-card{border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;background:var(--white)}
+.option-card:active,.option-card.selected{border-color:var(--red);background:var(--red-tint)}
+.option-card-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.option-card-sub{font-size:11px;color:var(--ink3);line-height:1.4}
+.warning-box{background:var(--orange2);border:0.5px solid rgba(192,92,0,0.2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--orange);line-height:1.4}
+.success-box{background:var(--green2);border:0.5px solid rgba(45,106,79,0.2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--green);line-height:1.4}
+.member-modal .btn-close{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:20px;padding:3px;-webkit-tap-highlight-color:transparent}
+.filter-pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.filter-pill{padding:5px 12px;border-radius:20px;border:1px solid var(--border);font-size:11px;font-weight:500;cursor:pointer;background:var(--white);color:var(--ink2);-webkit-tap-highlight-color:transparent}
+.filter-pill.active{background:var(--red);color:#fff;border-color:var(--red)}
+.exp-filter-bar{background:var(--linen);border-radius:var(--radius-sm);padding:8px 10px;margin-bottom:10px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink3)}
+.exp-filter-bar i{color:var(--orange);flex-shrink:0}
+.exp-filter-clear{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--red);font-size:11px;font-weight:600;font-family:'Inter',sans-serif}
+
+
+/* ── TASK CHAT ── */
+.task-card{background:var(--white);border-radius:var(--radius);border:0.5px solid var(--border);margin-bottom:9px;overflow:hidden;box-shadow:0 1px 3px rgba(107,16,16,0.04)}
+.task-card.done-card{opacity:0.55}
+.task-card-header{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.task-card-header:active{background:var(--linen)}
+.task-chat{display:none;border-top:0.5px solid var(--border-light);padding:0 12px 10px}
+.task-chat.open{display:block}
+.chat-messages{max-height:180px;overflow-y:auto;padding:8px 0 6px;display:flex;flex-direction:column;gap:6px}
+.chat-msg{display:flex;gap:7px;align-items:flex-end}
+.chat-msg.mine{flex-direction:row-reverse}
+.chat-bubble{max-width:78%;padding:6px 10px;border-radius:12px;font-size:12px;line-height:1.35;word-break:break-word}
+.chat-msg:not(.mine) .chat-bubble{background:var(--linen);color:var(--ink);border-bottom-left-radius:3px}
+.chat-msg.mine .chat-bubble{background:var(--red);color:#fff;border-bottom-right-radius:3px}
+.chat-meta{font-size:9px;color:var(--ink3);margin-top:2px;text-align:right}
+.chat-msg:not(.mine) .chat-meta{text-align:left}
+.chat-avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0}
+.chat-input-row{display:flex;gap:7px;align-items:center;padding-top:6px;border-top:0.5px solid var(--border-light)}
+.chat-input{flex:1;border:0.5px solid var(--border);border-radius:20px;padding:7px 12px;font-size:13px;font-family:'Inter',sans-serif;outline:none;background:var(--linen);color:var(--ink);min-width:0}
+.chat-input:focus{border-color:var(--red);background:var(--white)}
+.chat-send-btn{width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.chat-send-btn:active{background:var(--red-deep)}
+.chat-empty{font-size:11px;color:var(--ink3);text-align:center;padding:8px 0 4px}
+.task-chat-toggle{font-size:10px;color:var(--ink3);display:flex;align-items:center;gap:3px;margin-top:3px}
+.task-chat-toggle.has-msgs{color:var(--red)}
+
+</style>
+</head>
+<body>
+
+<!-- ═══ ONBOARDING SCREEN ═══ -->
+<div id="onboarding">
+  <div class="ob-house">
+    <div class="ob-flag">
+      <svg width="44" height="30" viewBox="0 0 44 30" xmlns="http://www.w3.org/2000/svg" style="border:2px solid rgba(255,255,255,0.4);border-radius:3px">
+        <rect width="44" height="30" fill="#C60C30"/>
+        <rect x="14" y="0" width="5" height="30" fill="#FFFFFF"/>
+        <rect x="0" y="12.5" width="44" height="5" fill="#FFFFFF"/>
+      </svg>
+    </div>
+    <div class="ob-title">The Red House</div>
+    <div class="ob-sub">Shared flat · Copenhagen</div>
+    <svg viewBox="0 0 200 110" width="200" height="110" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:18px auto 0;position:relative;z-index:1">
+      <rect width="200" height="110" fill="none"/>
+      <!-- shadow -->
+      <ellipse cx="100" cy="108" rx="60" ry="4" fill="rgba(0,0,0,0.15)"/>
+      <!-- building -->
+      <rect x="30" y="30" width="140" height="78" fill="#7A1515"/>
+      <!-- brick lines -->
+      <line x1="30" y1="45" x2="170" y2="45" stroke="rgba(0,0,0,0.1)" stroke-width="0.7"/>
+      <line x1="30" y1="60" x2="170" y2="60" stroke="rgba(0,0,0,0.1)" stroke-width="0.7"/>
+      <line x1="30" y1="75" x2="170" y2="75" stroke="rgba(0,0,0,0.1)" stroke-width="0.7"/>
+      <line x1="30" y1="90" x2="170" y2="90" stroke="rgba(0,0,0,0.1)" stroke-width="0.7"/>
+      <!-- roof -->
+      <polygon points="20,32 100,4 180,32" fill="#4A0E0E"/>
+      <rect x="20" y="30" width="160" height="4" fill="#FFFFFF" opacity="0.85"/>
+      <!-- windows row 1 -->
+      <rect x="44" y="38" width="14" height="17" rx="1" fill="white" opacity="0.88"/>
+      <line x1="44" y1="46.5" x2="58" y2="46.5" stroke="#8B1A1A" stroke-width="1.2"/>
+      <line x1="51" y1="38" x2="51" y2="55" stroke="#8B1A1A" stroke-width="1.2"/>
+      <rect x="66" y="38" width="14" height="17" rx="1" fill="white" opacity="0.88"/>
+      <line x1="66" y1="46.5" x2="80" y2="46.5" stroke="#8B1A1A" stroke-width="1.2"/>
+      <line x1="73" y1="38" x2="73" y2="55" stroke="#8B1A1A" stroke-width="1.2"/>
+      <rect x="88" y="38" width="14" height="17" rx="1" fill="white" opacity="0.88"/>
+      <line x1="88" y1="46.5" x2="102" y2="46.5" stroke="#8B1A1A" stroke-width="1.2"/>
+      <line x1="95" y1="38" x2="95" y2="55" stroke="#8B1A1A" stroke-width="1.2"/>
+      <rect x="110" y="38" width="14" height="17" rx="1" fill="white" opacity="0.88"/>
+      <line x1="110" y1="46.5" x2="124" y2="46.5" stroke="#8B1A1A" stroke-width="1.2"/>
+      <line x1="117" y1="38" x2="117" y2="55" stroke="#8B1A1A" stroke-width="1.2"/>
+      <rect x="132" y="38" width="14" height="17" rx="1" fill="white" opacity="0.88"/>
+      <line x1="132" y1="46.5" x2="146" y2="46.5" stroke="#8B1A1A" stroke-width="1.2"/>
+      <line x1="139" y1="38" x2="139" y2="55" stroke="#8B1A1A" stroke-width="1.2"/>
+      <!-- windows row 2 -->
+      <rect x="44" y="62" width="14" height="17" rx="1" fill="white" opacity="0.88"/>
+      <line x1="44" y1="70.5" x2="58" y2="70.5" stroke="#8B1A1A" stroke-width="1.2"/>
+      <line x1="51" y1="62" x2="51" y2="79" stroke="#8B1A1A" stroke-width="1.2"/>
+      <rect x="66" y="62" width="14" height="17" rx="1" fill="white" opacity="0.88"/>
+      <line x1="66" y1="70.5" x2="80" y2="70.5" stroke="#8B1A1A" stroke-width="1.2"/>
+      <line x1="73" y1="62" x2="73" y2="79" stroke="#8B1A1A" stroke-width="1.2"/>
+      <rect x="110" y="62" width="14" height="17" rx="1" fill="white" opacity="0.88"/>
+      <line x1="110" y1="70.5" x2="124" y2="70.5" stroke="#8B1A1A" stroke-width="1.2"/>
+      <line x1="117" y1="62" x2="117" y2="79" stroke="#8B1A1A" stroke-width="1.2"/>
+      <rect x="132" y="62" width="14" height="17" rx="1" fill="white" opacity="0.88"/>
+      <line x1="132" y1="70.5" x2="146" y2="70.5" stroke="#8B1A1A" stroke-width="1.2"/>
+      <line x1="139" y1="62" x2="139" y2="79" stroke="#8B1A1A" stroke-width="1.2"/>
+      <!-- door (blue) -->
+      <rect x="86" y="80" width="28" height="28" rx="2" fill="#174EA6"/>
+      <rect x="85" y="79" width="30" height="3" fill="white" opacity="0.85"/>
+      <circle cx="111" cy="94" r="2" fill="white" opacity="0.8"/>
+      <!-- flag on roof -->
+      <line x1="173" y1="4" x2="173" y2="22" stroke="white" stroke-width="1.5"/>
+      <rect x="173" y="4" width="18" height="12" fill="#C60C30"/>
+      <rect x="176.5" y="4" width="2.5" height="12" fill="white"/>
+      <rect x="173" y="8.5" width="18" height="2.5" fill="white"/>
+    </svg>
+  </div>
+
+  <div class="ob-panel">
+
+    <!-- STEP 0: code + name first, create house subtle below -->
+    <div class="ob-step active" id="ob-step-0">
+      <div class="ob-section-title">Enter your house</div>
+      <div class="ob-section-sub" style="margin-bottom:20px">Type the code your flatmate shared with you</div>
+
+      <div class="ob-field">
+        <label>House code</label>
+        <input id="ob-join-code-0" class="code-input" maxlength="6" placeholder="ABC123"
+          autocomplete="off" oninput="this.value=this.value.toUpperCase()"
+          onkeydown="if(event.key==='Enter')document.getElementById('ob-join-name-0').focus()">
+      </div>
+      <div class="ob-field">
+        <label>Your name</label>
+        <input id="ob-join-name-0" placeholder="e.g. José" autocomplete="off"
+          onkeydown="if(event.key==='Enter')window.obJoinFromStep0&&window.obJoinFromStep0()">
+      </div>
+      <div id="ob-join-error-0" style="color:var(--red);font-size:12px;text-align:center;margin-bottom:8px;display:none"></div>
+      <button class="ob-btn" onclick="window.obJoinFromStep0&&window.obJoinFromStep0()">
+        <i class="ti ti-door-enter" style="font-size:15px;vertical-align:-2px;margin-right:6px"></i>Enter the house
+      </button>
+
+      <div style="display:flex;align-items:center;gap:10px;margin:20px 0 16px">
+        <div style="flex:1;height:0.5px;background:var(--border)"></div>
+        <span style="font-size:11px;color:var(--ink3)">or</span>
+        <div style="flex:1;height:0.5px;background:var(--border)"></div>
+      </div>
+
+      <button onclick="window.obGoStep&&window.obGoStep('create-name')" style="display:block;width:100%;padding:9px;background:none;border:none;cursor:pointer;font-size:12px;color:var(--ink3);font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent">
+        <i class="ti ti-home-plus" style="font-size:13px;vertical-align:-2px;margin-right:4px"></i>Create a new house
+      </button>
+    </div>
+
+    <!-- STEP create-name: house name + your name -->
+    <div class="ob-step" id="ob-step-create-name">
+      <button class="ob-back" onclick="window.obGoStep&&window.obGoStep('0')"><i class="ti ti-arrow-left" style="font-size:14px"></i> Back</button>
+      <div class="ob-section-title">Name your house</div>
+      <div class="ob-section-sub">What do you call your flat?</div>
+      <div class="ob-field"><label>House name</label><input id="ob-house-name" placeholder="e.g. The Red House" autocomplete="off"></div>
+      <div class="ob-field"><label>Your name</label><input id="ob-your-name" placeholder="e.g. José" autocomplete="off"></div>
+      <button class="ob-btn" onclick="window.obNextToMembers&&window.obNextToMembers()">Continue</button>
+    </div>
+
+    <!-- STEP create-members: add flatmates -->
+    <div class="ob-step" id="ob-step-create-members">
+      <button class="ob-back" onclick="window.obGoStep&&window.obGoStep('create-name')"><i class="ti ti-arrow-left" style="font-size:14px"></i> Back</button>
+      <div class="ob-section-title">Add your flatmates</div>
+      <div class="ob-section-sub">Who lives in the house? (you can add more later)</div>
+      <div class="ob-members" id="ob-member-list"></div>
+      <div class="ob-add-member">
+        <input id="ob-new-member" placeholder="Flatmate name…" autocomplete="off" onkeydown="if(event.key==='Enter')window.obAddMember&&window.obAddMember()">
+        <button onclick="window.obAddMember&&window.obAddMember()">+ Add</button>
+      </div>
+      <button class="ob-btn" style="margin-top:18px" onclick="window.obFinishCreate&&window.obFinishCreate()">Create the house 🏠</button>
+    </div>
+
+    <!-- STEP create-code: show generated code -->
+    <div class="ob-step" id="ob-step-create-code">
+      <div class="ob-section-title">House created! 🎉</div>
+      <div class="ob-section-sub">Share this code with your flatmates so they can join</div>
+      <div class="ob-code-display">
+        <div class="ob-code-val" id="ob-generated-code">——</div>
+        <div class="ob-code-hint">Share this code with your flatmates</div>
+      </div>
+      <button class="ob-btn" onclick="obEnterApp()">Enter The Red House →</button>
+    </div>
+
+    <!-- STEP join: enter code -->
+    <div class="ob-step" id="ob-step-join">
+      <button class="ob-back" onclick="window.obGoStep&&window.obGoStep('0')"><i class="ti ti-arrow-left" style="font-size:14px"></i> Back</button>
+      <div class="ob-section-title">Join a house</div>
+      <div class="ob-section-sub">Enter the 6-letter code your flatmate shared with you</div>
+      <div class="ob-field"><label>House code</label><input id="ob-join-code" class="code-input" maxlength="6" placeholder="ABC123" autocomplete="off" oninput="this.value=this.value.toUpperCase()"></div>
+      <div class="ob-field"><label>Your name</label><input id="ob-join-name" placeholder="e.g. Clara" autocomplete="off"></div>
+      <button class="ob-btn" onclick="obJoin()">Join the house</button>
+      <div id="ob-join-error" style="color:var(--red);font-size:12px;text-align:center;margin-top:8px;display:none"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-frame-top"></div>
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="app-brand">
+        <svg class="dannebrog" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg" aria-label="Danish flag">
+          <rect width="32" height="22" fill="#C60C30"/>
+          <rect x="10" y="0" width="4" height="22" fill="#FFFFFF"/>
+          <rect x="0" y="9" width="32" height="4" fill="#FFFFFF"/>
+        </svg>
+        <div>
+          <div class="app-name">The Red House</div>
+          <div class="app-sub">Shared flat · Copenhagen</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="flat-chip" id="flat-name-label" onclick="changeFlatName()">Overgaden</div>
+        <button class="hdr-btn" id="code-copy-btn" onclick="copyHouseCode()" title="Copy house code" aria-label="Copy house code" style="display:none">
+          <i class="ti ti-key" aria-hidden="true"></i>
+        </button>
+        <button class="hdr-btn" onclick="openSettings()" title="Settings" aria-label="Settings">
+          <i class="ti ti-settings" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+    <div class="year-row">
+      <div class="year-bar">
+        <button class="year-btn" onclick="changeYear(-1)">‹</button>
+        <span class="year-label" id="year-label">2026</span>
+        <button class="year-btn" onclick="changeYear(1)">›</button>
+      </div>
+      <button id="code-pill" onclick="copyHouseCode()" style="display:none;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:0.5px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 10px;cursor:pointer;-webkit-tap-highlight-color:transparent">
+        <i class="ti ti-key" style="font-size:12px;color:rgba(255,255,255,0.7)"></i>
+        <span id="code-pill-text" style="font-size:13px;font-weight:700;letter-spacing:3px;color:#fff;font-family:'Playfair Display',serif">——</span>
+        <i class="ti ti-copy" style="font-size:11px;color:rgba(255,255,255,0.6)"></i>
+      </button>
+      <div class="sync-bar">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-label">saved</span>
+      </div>
+    </div>
+  </div>
+  <div class="header-frame-bottom"></div>
+</div>
+
+<!-- ═══ CONTENT ═══ -->
+<div class="content">
+
+  <!-- SCHEDULE -->
+  <div class="section active" id="sec-schedule">
+    <div class="week-nav">
+      <button class="week-nav-btn" onclick="changeWeek('schedule',-1)">‹</button>
+      <span class="week-label-text" id="sched-week-label">Week 26</span>
+      <button class="week-nav-btn" onclick="changeWeek('schedule',1)">›</button>
+      <button class="week-today-btn" onclick="goToCurrentWeek('schedule')">Today</button>
+    </div>
+    <div class="cleaner-card" id="cleaner-card">
+      <div class="cleaner-week-label" id="cleaner-week-lbl">WEEK 26 · CLEANER</div>
+      <div id="cleaner-display"></div>
+      <!-- Holiday strip -->
+      <div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--ink3);margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border-light);margin-bottom:6px">🌴 On holiday this week — tap to toggle</div>
+      <div class="holiday-strip" id="holiday-strip"></div>
+      <!-- Comment -->
+      <div class="comment-area">
+        <div class="comment-label">Week note</div>
+        <textarea class="comment-input" id="week-comment" rows="2" placeholder="Add a note for this week…" oninput="autoSaveComment()"></textarea>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" id="yr-overview-title">Full year · 2026</span>
+        <span style="font-size:10px;color:var(--ink3)">drag rows to swap</span>
+      </div>
+      <div id="year-overview-list"></div>
+    </div>
+  </div>
+
+  <!-- EXPENSES + BALANCE -->
+  <div class="section" id="sec-expenses">
+    <div class="summary-grid">
+      <div class="stat-card accent">
+        <div class="stat-label">Year total</div>
+        <div class="stat-value" id="total-year">0 kr</div>
+        <div class="stat-sub" id="year-sub">2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Per person</div>
+        <div class="stat-value" id="per-person">0 kr</div>
+        <div class="stat-sub">avg split</div>
+      </div>
+    </div>
+    <div class="month-tabs" id="month-tabs"></div>
+    <div class="exp-filter-bar" id="exp-filter-bar" style="display:none">
+      <i class="ti ti-calendar-event"></i>
+      <span id="exp-filter-bar-label">Filtered view</span>
+      <button class="exp-filter-clear" onclick="clearExpenseFilter()">✕ Show all</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" id="exp-month-label">All year</span>
+        <span id="exp-count" style="font-size:10px;color:var(--ink3)"></span>
+      </div>
+      <div id="expense-list"></div>
+    </div>
+    <!-- Balance toggle -->
+    <button class="balance-toggle-btn" id="bal-toggle-btn" onclick="toggleBalance()">
+      <i class="ti ti-scale" aria-hidden="true"></i>
+      <span id="bal-toggle-label">Show balance</span>
+      <i class="ti ti-chevron-down" id="bal-chevron" aria-hidden="true"></i>
+    </button>
+    <div class="balance-panel" id="balance-panel">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Who pays whom · <span id="bal-year">2026</span></span></div>
+        <div id="debt-arrows"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Balance per person</span></div>
+        <div id="balance-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- URGENT TASKS -->
+  <div class="section" id="sec-tasks">
+    <div class="week-nav">
+      <button class="week-nav-btn" onclick="changeWeek('tasks',-1)">‹</button>
+      <span class="week-label-text" id="tasks-week-label">Week 26</span>
+      <button class="week-nav-btn" onclick="changeWeek('tasks',1)">›</button>
+      <button class="week-today-btn" onclick="goToCurrentWeek('tasks')">Today</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Urgent tasks</span>
+        <span id="tasks-count" style="font-size:10px;color:var(--ink3)"></span>
+      </div>
+      <div id="task-list"></div>
+    </div>
+  </div>
+
+  <!-- GOOD NEWS -->
+  <div class="section" id="sec-goodnews">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:3px">Good News 🌟</div>
+    <div style="font-size:11px;color:var(--ink3);margin-bottom:12px">Share something good with the house</div>
+    <div id="goodnews-list"></div>
+  </div>
+
+</div>
+
+<!-- NAV (4 items) -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="switchTab('schedule',this)"><i class="ti ti-calendar" aria-hidden="true"></i>Schedule</button>
+  <button class="nav-btn" onclick="switchTab('expenses',this)"><i class="ti ti-receipt" aria-hidden="true"></i>Expenses</button>
+  <button class="nav-btn" onclick="switchTab('tasks',this)"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Urgent</button>
+  <button class="nav-btn" onclick="switchTab('goodnews',this)"><i class="ti ti-mood-happy" aria-hidden="true"></i>Good News</button>
+</nav>
+
+<button class="fab" onclick="openModal()" id="fab-btn" aria-label="Add">
+  <i class="ti ti-plus" aria-hidden="true"></i>
+</button>
+
+<!-- ADD MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="maybeClose(event,'modal-bg')">
+  <div class="modal">
+    <button class="btn-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Add new</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchModalTab('task',this)">Urgent task</button>
+      <button class="modal-tab" onclick="switchModalTab('expense',this)">Expense</button>
+    </div>
+    <div id="modal-task">
+      <div class="field"><label>Task</label><input id="t-name" placeholder="e.g. Fix broken window" autocomplete="off"></div>
+      <div class="field"><label>Assigned to</label><div class="who-grid" id="t-who"></div></div>
+      <div class="field"><label>Week</label><input id="t-week" type="week"></div>
+      <div class="field"><label>Notes (optional)</label><textarea id="t-notes" rows="2" style="resize:none" placeholder="Any details…"></textarea></div>
+      <button class="btn-primary" onclick="addTask()">Add urgent task</button>
+    </div>
+    <div id="modal-expense" style="display:none">
+      <div class="field"><label>Description</label><input id="e-name" placeholder="e.g. Netto groceries" autocomplete="off"></div>
+      <div class="field"><label>Amount (kr)</label><input id="e-amt" type="number" step="1" min="0" placeholder="0"></div>
+      <div class="field"><label>Category</label>
+        <select id="e-cat">
+          <option value="🛒">🛒 Groceries</option><option value="🧹">🧹 Cleaning</option>
+          <option value="💡">💡 Utilities</option><option value="🍕">🍕 Shared food</option>
+          <option value="🏠">🏠 Rent / fees</option><option value="📦">📦 Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Paid by</label><select id="e-payer"></select></div>
+      <div class="field"><label>Split between</label><div class="who-grid" id="e-split"></div></div>
+      <div class="field"><label>Month</label>
+        <select id="e-month">
+          <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+          <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+          <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="addExpense()">Add expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="modal-settings-bg" onclick="maybeClose(event,'modal-settings-bg')">
+  <div class="settings-modal">
+    <button class="btn-close" onclick="closeSettings()"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Settings</div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Residents</span></div>
+      <div id="roommate-config-list"></div>
+      <button class="add-btn" onclick="openAddMember()"><i class="ti ti-plus"></i> Add resident</button>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Member history</span></div>
+      <div id="member-event-log" style="font-size:10px;color:var(--ink3)">No changes yet</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">House</span></div>
+      <div class="config-row">
+        <div><div class="config-label">House name</div><div class="config-sub" id="house-name-cfg">The Red House</div></div>
+        <button onclick="changeFlatName()" style="background:none;border:none;cursor:pointer;color:var(--ink3)"><i class="ti ti-edit" style="font-size:16px"></i></button>
+      </div>
+      <div class="config-row">
+        <div><div class="config-label">Currency</div><div class="config-sub">Danish Krone (kr)</div></div>
+      </div>
+      <div class="config-row">
+        <div><div class="config-label">Cleaning rotation</div><div class="config-sub" id="rotation-sub">Week 1 → first resident</div></div>
+      </div>
+      <div class="config-row">
+        <div><div class="config-label">House code</div><div class="config-sub">Share with flatmates to join</div></div>
+        <div style="font-size:18px;font-weight:700;letter-spacing:4px;color:var(--red);font-family:'Playfair Display',serif" id="settings-group-code">——</div>
+      </div>
+    </div>
+    <!-- Mini house -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="background:var(--red);text-align:center">
+        <svg viewBox="0 0 160 90" width="160" height="90" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto">
+          <rect width="160" height="90" fill="#6B1010"/>
+          <line x1="0" y1="18" x2="160" y2="18" stroke="rgba(0,0,0,0.12)" stroke-width="0.5"/>
+          <line x1="0" y1="33" x2="160" y2="33" stroke="rgba(0,0,0,0.12)" stroke-width="0.5"/>
+          <line x1="0" y1="48" x2="160" y2="48" stroke="rgba(0,0,0,0.12)" stroke-width="0.5"/>
+          <line x1="0" y1="63" x2="160" y2="63" stroke="rgba(0,0,0,0.12)" stroke-width="0.5"/>
+          <line x1="0" y1="78" x2="160" y2="78" stroke="rgba(0,0,0,0.12)" stroke-width="0.5"/>
+          <polygon points="52,4 108,4 108,22 52,22" fill="#4A0E0E"/>
+          <rect x="40" y="22" width="80" height="3" fill="#FFF" opacity="0.88"/>
+          <rect x="55" y="29" width="11" height="13" rx="1" fill="white" opacity="0.9"/>
+          <rect x="74" y="29" width="11" height="13" rx="1" fill="white" opacity="0.9"/>
+          <rect x="93" y="29" width="11" height="13" rx="1" fill="white" opacity="0.9"/>
+          <line x1="55" y1="35.5" x2="66" y2="35.5" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="60.5" y1="29" x2="60.5" y2="42" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="74" y1="35.5" x2="85" y2="35.5" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="79.5" y1="29" x2="79.5" y2="42" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="93" y1="35.5" x2="104" y2="35.5" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="98.5" y1="29" x2="98.5" y2="42" stroke="#8B1A1A" stroke-width="1"/>
+          <rect x="55" y="48" width="11" height="13" rx="1" fill="white" opacity="0.9"/>
+          <rect x="74" y="48" width="11" height="13" rx="1" fill="white" opacity="0.9"/>
+          <rect x="93" y="48" width="11" height="13" rx="1" fill="white" opacity="0.9"/>
+          <line x1="55" y1="54.5" x2="66" y2="54.5" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="60.5" y1="48" x2="60.5" y2="61" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="74" y1="54.5" x2="85" y2="54.5" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="79.5" y1="48" x2="79.5" y2="61" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="93" y1="54.5" x2="104" y2="54.5" stroke="#8B1A1A" stroke-width="1"/>
+          <line x1="98.5" y1="48" x2="98.5" y2="61" stroke="#8B1A1A" stroke-width="1"/>
+          <rect x="72" y="67" width="15" height="20" rx="1" fill="#174EA6"/>
+          <rect x="71" y="66" width="17" height="2" fill="white" opacity="0.8"/>
+          <circle cx="85" cy="77" r="1.2" fill="white" opacity="0.8"/>
+          <rect x="143" y="6" width="13" height="9" fill="#C60C30"/>
+          <rect x="146.5" y="6" width="2" height="9" fill="white"/>
+          <rect x="143" y="9.5" width="13" height="2" fill="white"/>
+          <line x1="142" y1="6" x2="142" y2="15" stroke="white" stroke-width="1"/>
+        </svg>
+        <div style="color:rgba(255,255,255,0.55);font-size:9px;padding:5px 0 10px;letter-spacing:0.5px">THE RED HOUSE · COPENHAGEN</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GOOD NEWS MODAL -->
+<div class="modal-bg" id="modal-gn-bg" onclick="maybeClose(event,'modal-gn-bg')">
+  <div class="modal">
+    <button class="btn-close" onclick="closeGoodNews()"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Share good news 🌟</div>
+    <div class="field"><label>From</label><select id="gn-author"></select></div>
+    <div class="field"><label>Your news</label><textarea id="gn-text" rows="3" style="resize:none" placeholder="Something good happened…"></textarea></div>
+    <button class="btn-primary" onclick="submitGoodNews()">Share with the house</button>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+// ══════════════════════════════════════════════
+// FIREBASE SETUP
+// ══════════════════════════════════════════════
+import { initializeApp }          from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot, getDoc }
+                                   from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyCHxIAB3jK2okCMe8QT578Y2F8u0NPopK8",
+  authDomain:        "the-red-house-cph.firebaseapp.com",
+  projectId:         "the-red-house-cph",
+  storageBucket:     "the-red-house-cph.firebasestorage.app",
+  messagingSenderId: "517634076204",
+  appId:             "1:517634076204:web:9ae33cdbbfa915823deb89"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db    = getFirestore(fbApp);
+
+let unsubscribe    = null; // Firestore listener
+let isSyncing      = false;
+let pendingSave    = null;
+let localCode      = localStorage.getItem('rh_code')||null;
+let localName      = localStorage.getItem('rh_myname')||null;
+
+// ══════════════════════════════════════════════
+// CONSTANTS & STATE
+// ══════════════════════════════════════════════
+const COLORS=['#8B1A1A','#174EA6','#2D6A4F','#C05C00','#6B21A8','#0E7490'];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+let state={
+  flatName:'The Red House CPH',
+  roommates:[],
+  swaps:{},cleaningDone:{},weekComments:{},holidays:{},
+  tasks:[],expenses:[],goodnews:[],
+  memberEvents:[],archivedExpenses:[],
+  groupCode:null,
+};
+
+let currentYear       =new Date().getFullYear();
+let currentWeekNum    =getISOWeek(new Date());
+let schedWeek         =currentWeekNum;
+let tasksWeek         =currentWeekNum;
+let selectedMonth     =null;
+let currentTab        ='schedule';
+let modalTab          ='task';
+let selectedWho       =[];
+let selectedSplit     =[];
+let nextId            =1000;
+let toastTimer;
+let balanceOpen       =false;
+let commentTimer;
+let dragSrcWeek       =null;
+let expenseViewFilter =null;
+let removingMemberId  =null;
+let removeOpt         ='keep';
+let addMemberOpt      ='all';
+
+// ══════════════════════════════════════════════
+// FIREBASE PERSISTENCE
+// ══════════════════════════════════════════════
+
+// Write state to Firestore (debounced 400ms)
+let saveTimer=null;
+function save(){
+  setSyncStatus('syncing');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    if(!state.groupCode){setSyncStatus('saved');return;}
+    try{
+      await setDoc(doc(db,'houses',state.groupCode), sanitizeForFirestore(state));
+      setSyncStatus('saved');
+    }catch(e){
+      console.error('Firestore save error:',e);
+      setSyncStatus('offline');
+    }
+  },400);
+}
+
+// Remove undefined values (Firestore doesn't accept them)
+function sanitizeForFirestore(obj){
+  return JSON.parse(JSON.stringify(obj, (_,v)=>v===undefined?null:v));
+}
+
+// Subscribe to real-time updates from Firestore
+function subscribeToHouse(code){
+  if(unsubscribe) unsubscribe();
+  setSyncStatus('syncing');
+  unsubscribe=onSnapshot(
+    doc(db,'houses',code),
+    (snap)=>{
+      if(snap.exists()){
+        const remote=snap.data();
+        // Merge remote into state, preserving local UI state
+        state=Object.assign(state, remote);
+        state.groupCode=code;
+        // Re-render current tab
+        refreshCurrentTab();
+        setSyncStatus('saved');
+      }
+    },
+    (err)=>{
+      console.error('Firestore listener error:',err);
+      setSyncStatus('offline');
+    }
+  );
+}
+
+function setSyncStatus(s){
+  const dot=document.getElementById('sync-dot');
+  const lbl=document.getElementById('sync-label');
+  if(!dot||!lbl)return;
+  dot.className='sync-dot'+(s==='syncing'?' syncing':s==='offline'?' offline':'');
+  lbl.textContent=s==='syncing'?'syncing…':s==='saved'?'saved':'offline';
+}
+
+function refreshCurrentTab(){
+  if(currentTab==='schedule') renderSchedule();
+  if(currentTab==='expenses') renderExpenses();
+  if(currentTab==='tasks')    renderTasks();
+  if(currentTab==='goodnews') renderGoodNews();
+}
+
+// ══════════════════════════════════════════════
+// DATE HELPERS
+// ══════════════════════════════════════════════
+function getISOWeek(date){
+  const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
+  const day=d.getUTCDay()||7;
+  d.setUTCDate(d.getUTCDate()+4-day);
+  const y=new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d-y)/86400000)+1)/7);
+}
+function getWeekDates(wn,year){
+  const jan4=new Date(year,0,4);
+  const start=new Date(jan4);
+  start.setDate(jan4.getDate()-((jan4.getDay()||7)-1)+(wn-1)*7);
+  const end=new Date(start);end.setDate(start.getDate()+6);
+  return {start,end};
+}
+function weeksInYear(year){
+  const dec31=new Date(year,11,31);
+  const w=getISOWeek(dec31);
+  return w===1?getISOWeek(new Date(year,11,24)):w;
+}
+function isoStr(wn,year){return `${year}-W${String(wn).padStart(2,'0')}`;}
+function parseIso(s){const p=s.split('-W');return{year:parseInt(p[0]),week:parseInt(p[1])};}
+
+// ══════════════════════════════════════════════
+// ROTATION
+// ══════════════════════════════════════════════
+function cleanerForWeek(wn,year){
+  const n=state.roommates.length;if(!n)return null;
+  const key=isoStr(wn,year);
+  if(state.swaps&&state.swaps[key]!==undefined)
+    return state.roommates.find(r=>r.id===state.swaps[key])||null;
+  return state.roommates[(wn-1)%n];
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function rm(id){return state.roommates.find(r=>r.id===id);}
+function fmt(n){return Math.round(n).toLocaleString('da-DK')+' kr';}
+function avatar(r,sz=34){
+  return `<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${r.color};display:flex;align-items:center;justify-content:center;font-size:${Math.floor(sz*0.3)}px;font-weight:700;color:#fff;flex-shrink:0">${r.initial}</div>`;
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.style.display='none',2200);
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function changeYear(d){
+  currentYear+=d;
+  document.getElementById('year-label').textContent=currentYear;
+  document.getElementById('yr-overview-title').textContent='Full year · '+currentYear;
+  document.getElementById('year-sub').textContent=currentYear;
+  document.getElementById('bal-year').textContent=currentYear;
+  refreshCurrentTab();
+}
+function changeWeek(tab,d){
+  if(tab==='schedule'){schedWeek=Math.max(1,Math.min(weeksInYear(currentYear),schedWeek+d));renderSchedule();}
+  else{tasksWeek=Math.max(1,Math.min(weeksInYear(currentYear),tasksWeek+d));renderTasks();}
+}
+function goToCurrentWeek(tab){
+  currentYear=new Date().getFullYear();
+  currentWeekNum=getISOWeek(new Date());
+  document.getElementById('year-label').textContent=currentYear;
+  if(tab==='schedule'){schedWeek=currentWeekNum;renderSchedule();}
+  else{tasksWeek=currentWeekNum;renderTasks();}
+}
+function switchTab(t,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+t).classList.add('active');
+  btn.classList.add('active');
+  currentTab=t;
+  document.getElementById('fab-btn').style.display=t==='goodnews'?'none':'flex';
+  refreshCurrentTab();
+}
+
+// ══════════════════════════════════════════════
+// SCHEDULE
+// ══════════════════════════════════════════════
+function renderSchedule(){
+  const wn=schedWeek,year=currentYear;
+  const isCur=(wn===currentWeekNum&&year===new Date().getFullYear());
+  const key=isoStr(wn,year);
+  const{start,end}=getWeekDates(wn,year);
+  const f=d=>d.getDate()+'\/'+(d.getMonth()+1);
+  document.getElementById('sched-week-label').textContent=
+    `Week ${wn}  ·  ${f(start)}–${f(end)}`+(isCur?' (now)':'');
+  const card=document.getElementById('cleaner-card');
+  card.className='cleaner-card'+(isCur?' is-current':'');
+  document.getElementById('cleaner-week-lbl').textContent=`WEEK ${wn} · ${f(start).toUpperCase()}–${f(end).toUpperCase()}`;
+  const cleaner=cleanerForWeek(wn,year);
+  const isDone=!!(state.cleaningDone&&state.cleaningDone[key]);
+  const isSwapped=!!(state.swaps&&state.swaps[key]!==undefined);
+  const holidays=(state.holidays&&state.holidays[key])||[];
+  const display=document.getElementById('cleaner-display');
+  const cleanerOnHoliday=cleaner&&holidays.includes(cleaner.id);
+  if(!cleaner){
+    display.innerHTML='<div class="empty" style="padding:10px">No residents yet.</div>';
+  }else{
+    display.innerHTML=`
+      <div class="cleaner-avatar" style="background:${cleaner.color};${cleanerOnHoliday?'opacity:0.5;filter:grayscale(0.3);':''}">${cleaner.initial}</div>
+      <div class="cleaner-name" style="${cleanerOnHoliday?'color:var(--ink3);':''">${cleaner.name}</div>
+      <div class="cleaner-duty">House cleaning${isCur?' · this week':''}</div>
+      ${cleanerOnHoliday?`<div style="margin-top:8px;padding:7px 12px;background:var(--orange2);border:0.5px solid rgba(192,92,0,0.2);border-radius:var(--radius-sm);font-size:12px;color:var(--orange);font-weight:500">🌴 ${cleaner.name} is on holiday — consider swapping this week</div>`:''}
+      ${isSwapped&&!cleanerOnHoliday?'<div style="font-size:10px;color:var(--orange);margin-top:4px">⇄ Swapped</div>':''}
+      ${isDone?'<div class="cleaner-done-badge"><i class="ti ti-circle-check"></i> Done — well done!</div>'
+        :(isCur&&!cleanerOnHoliday?`<button class="mark-done-btn" onclick="markDone('${key}')"><i class="ti ti-check" style="font-size:12px;vertical-align:-1px;margin-right:3px"></i>Mark as done</button>`:'')}`;
+  }
+  const hStrip=document.getElementById('holiday-strip');
+  hStrip.innerHTML=state.roommates.map(r=>{
+    const onHol=holidays.includes(r.id);
+    return `<span class="holiday-chip${onHol?'':' off'}" style="background:${r.color}" onclick="toggleHoliday('${key}',${r.id})">
+      <i class="ti ti-${onHol?'beach':'user'}" style="font-size:11px"></i>${r.name}${onHol?' 🌴':''}
+    </span>`;
+  }).join('');
+  const comment=(state.weekComments&&state.weekComments[key])||'';;
+  document.getElementById('week-comment').value=comment;
+  renderYearList();
+}
+
+function renderYearList(){
+  const year=currentYear;
+  const total=weeksInYear(year);
+  const now=new Date();const cw=getISOWeek(now);const cy=now.getFullYear();
+  const container=document.getElementById('year-overview-list');
+  let html='';
+  for(let w=1;w<=total;w++){
+    const{start}=getWeekDates(w,year);
+    const p=cleanerForWeek(w,year);
+    const k=isoStr(w,year);
+    const done=!!(state.cleaningDone&&state.cleaningDone[k]);
+    const swapped=!!(state.swaps&&state.swaps[k]!==undefined);
+    const comment=state.weekComments&&state.weekComments[k];
+    const holidays=(state.holidays&&state.holidays[k])||[];
+    const isNow=(w===cw&&year===cy);
+    const isView=(w===schedWeek&&year===currentYear);
+    const d=start.getDate()+'\/'+(start.getMonth()+1);
+    html+=`<div class="yr-row${isNow?' is-current-wk':''}${isView?' is-viewing':''}${done?' is-done':''}"
+      draggable="true" data-week="${w}"
+      ondragstart="onDragStart(event,${w})" ondragover="onDragOver(event)"
+      ondragleave="onDragLeave(event)" ondrop="onDrop(event,${w})" ondragend="onDragEnd(event)"
+      onclick="schedWeek=${w};renderSchedule()">
+      <span class="yr-wk-num">W${w}</span>
+      <span class="yr-dates">${d}</span>
+      ${p?`<span class="yr-person-pill" style="background:${done?'#aaa':p.color};${done?'text-decoration:line-through;':''}">${done?'✓ ':''}${p.initial} ${p.name}</span>`:'<span style="color:var(--border);font-size:11px">—</span>'}
+      <span class="yr-icons">
+        ${holidays.length?`<span style="display:flex;gap:3px;align-items:center">${holidays.map(id=>{const r=rm(id);return r?`<span style="background:${r.color};color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;opacity:0.85">🌴 ${r.name}</span>`:''}).join('')}</span>`:''}
+        ${comment?`<i class="ti ti-message-circle yr-comment-dot" title="${comment}"></i>`:''}
+        ${swapped?'<i class="ti ti-switch-horizontal yr-swap-icon" title="Swapped"></i>':''}
+        ${done?'<i class="ti ti-circle-check" style="color:var(--green);font-size:15px;animation:slideCheckIn 0.3s ease"></i>':''}
+      </span>
+    </div>`;
+  }
+  container.innerHTML=html;
+  if(year===cy){
+    setTimeout(()=>{
+      const cur=container.querySelector('.is-current-wk');
+      if(cur)cur.scrollIntoView({block:'nearest',behavior:'smooth'});
+    },80);
+  }
+}
+
+function markDone(key){
+  if(!state.cleaningDone)state.cleaningDone={};
+  state.cleaningDone[key]=true;
+  save();
+  renderSchedule();
+  const card=document.getElementById('cleaner-card');
+  card.classList.add('celebrating');
+  setTimeout(()=>card.classList.remove('celebrating'),600);
+  shootConfetti(card);
+  setTimeout(()=>{
+    const rows=document.querySelectorAll('.yr-row.is-done');
+    rows.forEach(r=>r.classList.add('just-done'));
+    const nextRows=document.querySelectorAll('.yr-row:not(.is-done)');
+    if(nextRows.length){
+      nextRows[0].style.background='var(--green2)';
+      nextRows[0].style.transition='background 1.2s ease';
+      setTimeout(()=>{nextRows[0].style.background='';nextRows[0].style.transition='';},2000);
+    }
+  },200);
+  showToast('🎉 Done! Great job!');
+}
+
+function shootConfetti(anchor){
+  const rect=anchor.getBoundingClientRect();
+  const colors=['#8B1A1A','#174EA6','#2D6A4F','#C05C00','#facc15','#C60C30'];
+  for(let i=0;i<18;i++){
+    const dot=document.createElement('div');
+    dot.className='confetti-dot';
+    const size=5+Math.random()*7;
+    const startX=rect.left+rect.width/2+(Math.random()-0.5)*rect.width*0.7;
+    const startY=rect.top+rect.height*0.4;
+    dot.style.cssText=`left:${startX}px;top:${startY}px;width:${size}px;height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${0.6+Math.random()*0.8}s;animation-delay:${Math.random()*0.25}s;
+      position:fixed;z-index:99;border-radius:${Math.random()>0.5?'50%':'2px'};`;
+    dot.style.setProperty('--tx',`${(Math.random()-0.5)*80}px`);
+    document.body.appendChild(dot);
+    setTimeout(()=>dot.remove(),1500);
+  }
+}
+
+function toggleHoliday(key,rmId){
+  if(!state.holidays)state.holidays={};
+  if(!state.holidays[key])state.holidays[key]=[];
+  const arr=state.holidays[key];
+  const idx=arr.indexOf(rmId);
+  if(idx>=0)arr.splice(idx,1);else arr.push(rmId);
+  save();renderSchedule();
+}
+
+function autoSaveComment(){
+  const key=isoStr(schedWeek,currentYear);
+  const val=document.getElementById('week-comment').value;
+  clearTimeout(commentTimer);
+  commentTimer=setTimeout(()=>{
+    if(!state.weekComments)state.weekComments={};
+    state.weekComments[key]=val;
+    save();
+  },600);
+}
+
+function onDragStart(e,wn){dragSrcWeek=wn;e.dataTransfer.effectAllowed='move';e.currentTarget.classList.add('dragging');}
+function onDragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move';e.currentTarget.classList.add('drag-over');}
+function onDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function onDrop(e,targetWn){
+  e.preventDefault();e.currentTarget.classList.remove('drag-over');
+  if(dragSrcWeek===null||dragSrcWeek===targetWn)return;
+  swapWeeks(dragSrcWeek,targetWn);dragSrcWeek=null;
+}
+function onDragEnd(e){
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.yr-row').forEach(r=>r.classList.remove('drag-over','dragging'));
+}
+function swapWeeks(wA,wB){
+  const year=currentYear;
+  if(!state.swaps)state.swaps={};
+  const personA=cleanerForWeek(wA,year);
+  const personB=cleanerForWeek(wB,year);
+  if(personA)state.swaps[isoStr(wB,year)]=personA.id;
+  if(personB)state.swaps[isoStr(wA,year)]=personB.id;
+  save();renderSchedule();
+  showToast(`✓ Swapped W${wA} (${personA?.name||'?'}) ⇄ W${wB} (${personB?.name||'?'})`);
+}
+
+// ══════════════════════════════════════════════
+// EXPENSES + BALANCE
+// ══════════════════════════════════════════════
+function buildMonthTabs(){
+  document.getElementById('month-tabs').innerHTML=
+    `<button class="month-tab${selectedMonth===null?' active':''}" onclick="filterMonth(null)">All</button>`
+    +MONTHS.map((m,i)=>`<button class="month-tab${selectedMonth===i+1?' active':''}" onclick="filterMonth(${i+1})">${m}</button>`).join('');
+}
+function filterMonth(m){selectedMonth=m;renderExpenses();}
+function clearExpenseFilter(){expenseViewFilter=null;renderExpenses();showToast('Showing all expenses');}
+
+function renderExpenses(){
+  buildMonthTabs();
+  document.getElementById('bal-year').textContent=currentYear;
+  document.getElementById('year-sub').textContent=currentYear;
+  const yearExp=state.expenses.filter(e=>e.year===currentYear);
+  const total=yearExp.reduce((s,e)=>s+e.amount,0);
+  const per=state.roommates.length?total/state.roommates.length:0;
+  document.getElementById('total-year').textContent=fmt(total);
+  document.getElementById('per-person').textContent=fmt(per);
+  let baseExp=yearExp;
+  if(expenseViewFilter){
+    const filterTs=new Date(expenseViewFilter).getTime();
+    baseExp=yearExp.filter(e=>{
+      const eDate=e.date?new Date(e.date).getTime():new Date(e.year,e.month-1,1).getTime();
+      return eDate>=filterTs;
+    });
+  }
+  const filtered=selectedMonth?baseExp.filter(e=>e.month===selectedMonth):baseExp;
+  document.getElementById('exp-month-label').textContent=selectedMonth?MONTHS_FULL[selectedMonth-1]:'All year';
+  document.getElementById('exp-count').textContent=filtered.length?filtered.length+' entries':'';
+  const filterBar=document.getElementById('exp-filter-bar');
+  if(filterBar){
+    if(expenseViewFilter){
+      const fd=new Date(expenseViewFilter);
+      filterBar.style.display='flex';
+      document.getElementById('exp-filter-bar-label').textContent=
+        'Showing expenses from '+fd.getDate()+'\/'+(fd.getMonth()+1)+'\/'+fd.getFullYear()+' onwards';
+    }else{filterBar.style.display='none';}
+  }
+  const list=document.getElementById('expense-list');
+  if(!filtered.length){list.innerHTML='<div class="empty"><i class="ti ti-receipt-off"></i>No expenses yet</div>';return;}
+  if(!selectedMonth){
+    const byM={};
+    filtered.forEach(e=>{if(!byM[e.month])byM[e.month]=[];byM[e.month].push(e);});
+    let html='';
+    Object.keys(byM).sort((a,b)=>b-a).forEach(m=>{
+      const mT=byM[m].reduce((s,e)=>s+e.amount,0);
+      html+=`<div class="month-divider"><span>${MONTHS_FULL[m-1]}</span><span>${fmt(mT)}</span></div>`;
+      html+=byM[m].map(e=>expRowHTML(e)).join('');
+    });
+    list.innerHTML=html;
+  }else{list.innerHTML=filtered.map(e=>expRowHTML(e)).join('');}
+  if(balanceOpen)renderBalance();
+}
+
+function expRowHTML(e){
+  const payer=rm(e.payer);
+  const share=e.amount/e.split.length;
+  return `<div class="expense-item">
+    <div class="expense-icon" style="background:${payer?payer.color+'22':'#f5e8e8'}">${e.cat}</div>
+    <div class="expense-info">
+      <div class="expense-name">${e.name}</div>
+      <div class="expense-detail">Paid by <span style="color:${payer?payer.color:'inherit'};font-weight:600">${payer?payer.name:'?'}</span> · ${Math.round(share).toLocaleString('da-DK')} kr/person</div>
+    </div>
+    <div class="expense-amount">${fmt(e.amount)}</div>
+  </div>`;
+}
+
+function toggleBalance(){
+  balanceOpen=!balanceOpen;
+  const panel=document.getElementById('balance-panel');
+  const label=document.getElementById('bal-toggle-label');
+  const chev=document.getElementById('bal-chevron');
+  panel.className='balance-panel'+(balanceOpen?' open':'');
+  label.textContent=balanceOpen?'Hide balance':'Show balance';
+  chev.className='ti ti-chevron-'+(balanceOpen?'up':'down');
+  if(balanceOpen)renderBalance();
+}
+
+function computeBalances(){
+  let yearExp=state.expenses.filter(e=>e.year===currentYear);
+  if(expenseViewFilter){
+    const filterTs=new Date(expenseViewFilter).getTime();
+    yearExp=yearExp.filter(e=>{
+      const eDate=e.date?new Date(e.date).getTime():new Date(e.year,e.month-1,1).getTime();
+      return eDate>=filterTs;
+    });
+  }
+  const bal={};
+  state.roommates.forEach(r=>bal[r.id]=0);
+  yearExp.forEach(e=>{
+    const share=e.amount/e.split.length;
+    bal[e.payer]=(bal[e.payer]||0)+e.amount;
+    e.split.forEach(id=>bal[id]=(bal[id]||0)-share);
+  });
+  return bal;
+}
+
+function renderBalance(){
+  const bal=computeBalances();
+  document.getElementById('balance-list').innerHTML=state.roommates.map(r=>{
+    const b=bal[r.id]||0;
+    return `<div class="balance-row">
+      <div class="balance-person">${avatar(r,32)}
+        <div><div style="font-size:13px;font-weight:500">${r.name}</div>
+        <div style="font-size:10px;color:var(--ink3)">${b>=0.5?'to receive':b<=-0.5?'to pay':'settled'}</div></div>
+      </div>
+      <div class="balance-amount ${b>=0.5?'positive':b<=-0.5?'negative':''}">${b>0?'+':''}${fmt(Math.abs(b))}</div>
+    </div>`;
+  }).join('');
+  const debts=[];const copy={};
+  state.roommates.forEach(r=>copy[r.id]=bal[r.id]||0);
+  const cred=state.roommates.filter(r=>copy[r.id]>0.5).sort((a,b)=>copy[b.id]-copy[a.id]);
+  const debt=state.roommates.filter(r=>copy[r.id]<-0.5).sort((a,b)=>copy[a.id]-copy[b.id]);
+  let ci=0,di=0;
+  while(ci<cred.length&&di<debt.length){
+    const c=cred[ci],d=debt[di];
+    const amt=Math.min(copy[c.id],Math.abs(copy[d.id]));
+    if(amt>0.5)debts.push({from:d,to:c,amount:amt});
+    copy[c.id]-=amt;copy[d.id]+=amt;
+    if(copy[c.id]<0.5)ci++;if(copy[d.id]>-0.5)di++;
+  }
+  document.getElementById('debt-arrows').innerHTML=!debts.length
+    ?'<div style="text-align:center;padding:10px;font-size:12px;color:var(--green)"><i class="ti ti-circle-check" style="font-size:16px;vertical-align:-3px;margin-right:4px"></i>All settled!</div>'
+    :debts.map(d=>`<div class="debt-arrow">${avatar(d.from,24)}
+        <i class="ti ti-arrow-right" style="color:var(--orange);font-size:12px;flex-shrink:0"></i>
+        ${avatar(d.to,24)}
+        <span style="color:var(--ink2);font-size:11px;flex:1">${d.from.name} → ${d.to.name}</span>
+        <span class="debt-amt">${fmt(d.amount)}</span>
+      </div>`).join('');
+}
+
+// ══════════════════════════════════════════════
+// TASKS
+// ══════════════════════════════════════════════
+function renderTasks(){
+  const wn=tasksWeek,year=currentYear;
+  const isCur=(wn===currentWeekNum&&year===new Date().getFullYear());
+  const{start,end}=getWeekDates(wn,year);
+  const f=d=>d.getDate()+'\/'+(d.getMonth()+1);
+  document.getElementById('tasks-week-label').textContent=`Week ${wn}  ·  ${f(start)}–${f(end)}`+(isCur?' (now)':'');
+  const wStr=isoStr(wn,year);
+  const weekTasks=state.tasks.filter(t=>t.week===wStr);
+  const pending=weekTasks.filter(t=>!t.done);
+  const done=weekTasks.filter(t=>t.done);
+  document.getElementById('tasks-count').textContent=weekTasks.length?`${done.length}/${weekTasks.length} done`:'';
+  const list=document.getElementById('task-list');
+  if(!weekTasks.length){list.innerHTML='<div class="empty"><i class="ti ti-circle-check"></i>No urgent tasks this week.</div>';return;}
+  let html=pending.map(t=>taskRowHTML(t)).join('');
+  if(done.length){
+    html+=`<div style="display:flex;align-items:center;gap:7px;margin:12px 0 8px">
+      <div style="flex:1;height:0.5px;background:var(--border-light)"></div>
+      <span style="font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px">Done</span>
+      <div style="flex:1;height:0.5px;background:var(--border-light)"></div></div>`;
+    html+=done.map(t=>taskRowHTML(t)).join('');
+  }
+  list.innerHTML=html;
+}
+function taskRowHTML(t){
+  const assignees=t.assignee.map(id=>rm(id)).filter(Boolean);
+  const avatars=assignees.map(r=>`<span class="avatar-sm" style="background:${r.color}">${r.initial}</span>`).join('');
+  const msgs=(t.comments||[]);
+  const msgCount=msgs.length;
+  const lastMsg=msgCount?msgs[msgs.length-1]:null;
+  const lastAuthor=lastMsg?rm(lastMsg.authorId):null;
+
+  const messagesHTML=!msgCount
+    ?'<div class="chat-empty">No comments yet — be the first</div>'
+    :msgs.map(m=>{
+        const author=rm(m.authorId);
+        const isMine=author&&author.id===(localMemberId||1);
+        const time=new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+        const day=new Date(m.ts).toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit'});
+        return `<div class="chat-msg${isMine?' mine':''}">
+          <div class="chat-avatar" style="background:${author?author.color:'#aaa'}">${author?author.initial:'?'}</div>
+          <div>
+            <div class="chat-bubble">${m.text}</div>
+            <div class="chat-meta">${author?author.name:'?'} · ${day} ${time}</div>
+          </div>
+        </div>`;
+      }).join('');
+
+  return `<div class="task-card${t.done?' done-card':''}" id="task-card-${t.id}">
+    <div class="task-card-header" onclick="toggleTaskChat(${t.id})">
+      <div class="task-check${t.done?' done':''}" onclick="event.stopPropagation();toggleTask(${t.id})" style="margin-top:2px">
+        ${t.done?'<i class="ti ti-check"></i>':''}
+      </div>
+      <div class="task-info" style="flex:1;min-width:0">
+        <div class="task-name${t.done?' done':''}">${t.name}</div>
+        ${t.notes?`<div class="task-meta">${t.notes}</div>`:''}
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+          <div style="display:flex">${avatars}</div>
+          <div class="task-chat-toggle${msgCount?' has-msgs':''}">
+            <i class="ti ti-message-circle" style="font-size:12px"></i>
+            ${msgCount?`${msgCount} comment${msgCount>1?'s':''}${lastAuthor?' · '+lastMsg.text.slice(0,22)+(lastMsg.text.length>22?'…':''):''}` :'Add comment'}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+        <span class="urgency-pill">Urgent</span>
+        <button class="task-del" onclick="event.stopPropagation();deleteTask(${t.id})"><i class="ti ti-trash" style="font-size:13px"></i></button>
+      </div>
+    </div>
+    <div class="task-chat" id="task-chat-${t.id}">
+      <div class="chat-messages" id="chat-msgs-${t.id}">${messagesHTML}</div>
+      <div class="chat-input-row">
+        <select id="chat-author-${t.id}" style="border:0.5px solid var(--border);border-radius:20px;padding:5px 8px;font-size:11px;font-family:Inter,sans-serif;background:var(--linen);color:var(--ink);outline:none;flex-shrink:0;max-width:90px">
+          ${state.roommates.map(r=>`<option value="${r.id}">${r.name}</option>`).join('')}
+        </select>
+        <input class="chat-input" id="chat-input-${t.id}" placeholder="Short comment…" maxlength="160"
+          onkeydown="if(event.key==='Enter')sendTaskComment(${t.id})">
+        <button class="chat-send-btn" onclick="sendTaskComment(${t.id})">
+          <i class="ti ti-send" style="font-size:14px"></i>
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleTaskChat(id){
+  const chat=document.getElementById('task-chat-'+id);
+  if(!chat)return;
+  const isOpen=chat.classList.contains('open');
+  // Close all others first
+  document.querySelectorAll('.task-chat.open').forEach(c=>c.classList.remove('open'));
+  if(!isOpen){
+    chat.classList.add('open');
+    // Scroll messages to bottom
+    const msgs=document.getElementById('chat-msgs-'+id);
+    if(msgs)setTimeout(()=>msgs.scrollTop=msgs.scrollHeight,50);
+    // Focus input
+    const inp=document.getElementById('chat-input-'+id);
+    if(inp)setTimeout(()=>inp.focus(),100);
+  }
+}
+
+function sendTaskComment(taskId){
+  const inp=document.getElementById('chat-input-'+taskId);
+  const authorSel=document.getElementById('chat-author-'+taskId);
+  if(!inp||!inp.value.trim())return;
+  const text=inp.value.trim();
+  const authorId=authorSel?parseInt(authorSel.value):(localMemberId||1);
+  const t=state.tasks.find(x=>x.id===taskId);
+  if(!t)return;
+  if(!t.comments)t.comments=[];
+  t.comments.push({id:++nextId,authorId,text,ts:new Date().toISOString()});
+  inp.value='';
+  save();
+  renderTasks();
+  // Re-open the chat after re-render
+  setTimeout(()=>{
+    const chat=document.getElementById('task-chat-'+taskId);
+    if(chat){
+      chat.classList.add('open');
+      const msgs=document.getElementById('chat-msgs-'+taskId);
+      if(msgs)msgs.scrollTop=msgs.scrollHeight;
+    }
+  },30);
+}
+
+function toggleTask(id){const t=state.tasks.find(x=>x.id===id);if(t){t.done=!t.done;save();renderTasks();}}
+function deleteTask(id){state.tasks=state.tasks.filter(t=>t.id!==id);save();renderTasks();showToast('Task removed');}
+
+let localMemberId=null; // set after login
+
+// ══════════════════════════════════════════════
+// GOOD NEWS
+// ══════════════════════════════════════════════
+function renderGoodNews(){
+  const items=(state.goodnews||[]).slice().reverse();
+  const container=document.getElementById('goodnews-list');
+  if(!items.length){
+    container.innerHTML='<div class="empty"><i class="ti ti-mood-happy"></i>No good news yet — be the first!</div>'
+      +'<button onclick="openGoodNews()" style="display:block;width:100%;padding:10px;background:var(--red-pale);color:var(--red);border:1px dashed var(--red);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">🌟 Share your good news</button>';
+    return;
+  }
+  container.innerHTML=items.map(g=>{
+    const author=rm(g.authorId);
+    const d=new Date(g.date);
+    const ds=d.getDate()+'\/'+(d.getMonth()+1)+'\/'+d.getFullYear();
+    return `<div class="gn-item">${author?avatar(author,34):''}
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:baseline;gap:7px;margin-bottom:3px">
+          <span style="font-size:13px;font-weight:600">${author?author.name:'Someone'}</span>
+          <span style="font-size:10px;color:var(--ink3)">${ds}</span>
+          <button onclick="deleteGoodNews(${g.id})" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:13px;padding:0"><i class="ti ti-trash"></i></button>
+        </div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.4">${g.text}</div>
+      </div></div>`;
+  }).join('')
+  +`<div style="padding-top:12px"><button onclick="openGoodNews()" style="width:100%;padding:10px;background:var(--red-pale);color:var(--red);border:1px dashed var(--red);border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">🌟 Share your good news</button></div>`;
+}
+function openGoodNews(){
+  document.getElementById('gn-author').innerHTML=state.roommates.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+  document.getElementById('gn-text').value='';
+  document.getElementById('modal-gn-bg').classList.add('open');
+  setTimeout(()=>document.getElementById('gn-text').focus(),120);
+}
+function closeGoodNews(){document.getElementById('modal-gn-bg').classList.remove('open');}
+function submitGoodNews(){
+  const text=document.getElementById('gn-text').value.trim();
+  if(!text){showToast('Write something first!');return;}
+  if(!state.goodnews)state.goodnews=[];
+  state.goodnews.push({id:++nextId,authorId:parseInt(document.getElementById('gn-author').value),text,date:new Date().toISOString().slice(0,10)});
+  closeGoodNews();save();renderGoodNews();showToast('✨ Shared!');
+}
+function deleteGoodNews(id){state.goodnews=(state.goodnews||[]).filter(g=>g.id!==id);save();renderGoodNews();}
+
+// ══════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════
+function openSettings(){renderSettingsModal();document.getElementById('modal-settings-bg').classList.add('open');}
+function closeSettings(){document.getElementById('modal-settings-bg').classList.remove('open');}
+
+function renderSettingsModal(){
+  document.getElementById('house-name-cfg').textContent=state.flatName;
+  document.getElementById('flat-name-label').textContent=state.flatName;
+  document.getElementById('rotation-sub').textContent='Week 1 → '+(state.roommates[0]?.name||'first resident')+', round-robin';
+  const evLog=document.getElementById('member-event-log');
+  if(evLog){
+    const events=(state.memberEvents||[]).slice(-5).reverse();
+    evLog.innerHTML=events.length
+      ?events.map(ev=>`<div style="font-size:10px;color:var(--ink3);padding:2px 0">${ev.type==='add'?'➕':'➖'} <strong>${ev.name}</strong> — ${ev.date}</div>`).join('')
+      :'<div style="font-size:10px;color:var(--border)">No changes yet</div>';
+  }
+  // Show group code
+  const codeEl=document.getElementById('settings-group-code');
+  if(codeEl)codeEl.textContent=state.groupCode||'—';
+
+  document.getElementById('roommate-config-list').innerHTML=state.roommates.map(r=>`
+    <div class="rm-cfg-item">${avatar(r,32)}
+      <div style="flex:1"><div style="font-size:13px;font-weight:500">${r.name}</div>
+      <div style="font-size:10px;color:var(--ink3)">${r.id===1?'You':'Resident'}</div></div>
+      <button onclick="openRemoveMember(${r.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);padding:4px">
+        <i class="ti ti-user-minus" style="font-size:16px"></i>
+      </button>
+    </div>`).join('');
+}
+
+function changeFlatName(){
+  const n=prompt('House name:',state.flatName);
+  if(n&&n.trim()){
+    state.flatName=n.trim();
+    document.getElementById('flat-name-label').textContent=state.flatName;
+    if(document.getElementById('house-name-cfg'))document.getElementById('house-name-cfg').textContent=state.flatName;
+    save();showToast('Name updated');
+  }
+}
+
+function openRemoveMember(id){
+  removingMemberId=id;removeOpt='keep';
+  const r=rm(id);if(!r)return;
+  document.getElementById('remove-modal-title').textContent='Remove '+r.name;
+  const bal=computeBalances();
+  const b=bal[id]||0;const absB=Math.abs(b);
+  const section=document.getElementById('remove-balance-section');
+  if(absB>0.5){
+    section.innerHTML=`<div class="${b>0?'success-box':'warning-box'}" style="margin-bottom:14px">
+      <strong>${r.name}</strong> ${b>0?'is owed':'owes'} <strong>${fmt(absB)}</strong>
+      ${b>0?' — make sure to receive this before they leave':' — settle this before removing them'}.
+    </div>`;
+  }else{
+    section.innerHTML=`<div class="success-box" style="margin-bottom:14px">✓ <strong>${r.name}</strong>'s balance is settled — all good!</div>`;
+  }
+  ['keep','clear','archive'].forEach(o=>{
+    const el=document.getElementById('opt-'+o);
+    if(el)el.classList.toggle('selected',o==='keep');
+  });
+  document.getElementById('modal-remove-bg').classList.add('open');
+}
+function closeRemoveMember(){document.getElementById('modal-remove-bg').classList.remove('open');removingMemberId=null;}
+function selectRemoveOpt(opt){
+  removeOpt=opt;
+  ['keep','clear','archive'].forEach(o=>{const el=document.getElementById('opt-'+o);if(el)el.classList.toggle('selected',o===opt);});
+}
+function confirmRemoveMember(){
+  const id=removingMemberId;const r=rm(id);if(!r)return;
+  const today=new Date().toISOString().slice(0,10);
+  if(removeOpt==='clear'){
+    if(!state.archivedExpenses)state.archivedExpenses=[];
+    state.archivedExpenses.push(...state.expenses.map(e=>({...e,archivedAt:today,removedMember:r.name})));
+    state.expenses=[];expenseViewFilter=null;showToast('✓ Balance cleared!');
+  }else if(removeOpt==='archive'){
+    if(!state.archivedExpenses)state.archivedExpenses=[];
+    const theirExp=state.expenses.filter(e=>e.payer===id||e.split.includes(id));
+    state.archivedExpenses.push(...theirExp.map(e=>({...e,archivedAt:today,removedMember:r.name})));
+    state.expenses=state.expenses.filter(e=>!(e.payer===id&&e.split.length===1));
+    state.expenses.forEach(e=>{
+      e.split=e.split.filter(x=>x!==id);
+      if(!e.split.length)e.split=[state.roommates.find(x=>x.id!==id)?.id||1];
+      if(e.payer===id)e.payer=state.roommates.find(x=>x.id!==id)?.id||1;
+    });
+    showToast('📦 Expenses archived');
+  }else{
+    state.expenses.forEach(e=>{
+      e.split=e.split.filter(x=>x!==id);
+      if(!e.split.length)e.split=[state.roommates.find(x=>x.id!==id)?.id||1];
+      if(e.payer===id)e.payer=state.roommates.find(x=>x.id!==id)?.id||1;
+    });
+    showToast('✓ '+r.name+' removed');
+  }
+  if(!state.memberEvents)state.memberEvents=[];
+  state.memberEvents.push({type:'remove',name:r.name,date:today,opt:removeOpt});
+  state.tasks.forEach(t=>{t.assignee=t.assignee.filter(x=>x!==id);if(!t.assignee.length)t.assignee=[state.roommates.find(x=>x.id!==id)?.id||1];});
+  state.roommates=state.roommates.filter(x=>x.id!==id);
+  closeRemoveMember();save();renderSettingsModal();
+  if(currentTab==='schedule')renderSchedule();
+  if(currentTab==='expenses')renderExpenses();
+}
+
+function openAddMember(){
+  addMemberOpt='all';
+  document.getElementById('new-member-name').value='';
+  document.getElementById('new-member-join-date').value=new Date().toISOString().slice(0,10);
+  ['all','from'].forEach(o=>{const el=document.getElementById('opt-add-'+o);if(el)el.classList.toggle('selected',o==='all');});
+  document.getElementById('modal-add-member-bg').classList.add('open');
+  setTimeout(()=>document.getElementById('new-member-name').focus(),100);
+}
+function closeAddMember(){document.getElementById('modal-add-member-bg').classList.remove('open');}
+function selectAddOpt(opt){
+  addMemberOpt=opt;
+  ['all','from'].forEach(o=>{const el=document.getElementById('opt-add-'+o);if(el)el.classList.toggle('selected',o===opt);});
+}
+function confirmAddMember(){
+  const name=document.getElementById('new-member-name').value.trim();
+  if(!name){document.getElementById('new-member-name').focus();return;}
+  const joinDate=document.getElementById('new-member-join-date').value||new Date().toISOString().slice(0,10);
+  const newMember={id:++nextId,name,initial:name.substring(0,2).toUpperCase(),color:COLORS[state.roommates.length%COLORS.length],joinDate};
+  state.roommates.push(newMember);
+  if(!state.memberEvents)state.memberEvents=[];
+  state.memberEvents.push({type:'add',name,date:joinDate,opt:addMemberOpt});
+  if(addMemberOpt==='from')expenseViewFilter=joinDate;
+  closeAddMember();save();renderSettingsModal();
+  if(currentTab==='expenses')renderExpenses();
+  showToast('🏠 '+name+' added');
+}
+
+// ══════════════════════════════════════════════
+// MODALS (add task / expense)
+// ══════════════════════════════════════════════
+function openModal(){
+  document.getElementById('modal-bg').classList.add('open');
+  switchModalTab(currentTab==='expenses'?'expense':'task');
+  buildModalRoommates();
+  const wi=document.getElementById('t-week');if(wi)wi.value=isoStr(tasksWeek,currentYear);
+  const mi=document.getElementById('e-month');if(mi)mi.value=new Date().getMonth()+1;
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open');}
+function maybeClose(e,id){
+  if(e.target===document.getElementById(id)){
+    if(id==='modal-bg')closeModal();
+    else if(id==='modal-settings-bg')closeSettings();
+    else if(id==='modal-gn-bg')closeGoodNews();
+    else if(id==='modal-remove-bg')closeRemoveMember();
+    else if(id==='modal-add-member-bg')closeAddMember();
+  }
+}
+function switchModalTab(t){
+  modalTab=t;
+  document.querySelectorAll('.modal-tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='task')||(i===1&&t==='expense')));
+  document.getElementById('modal-task').style.display=t==='task'?'':'';
+  document.getElementById('modal-expense').style.display=t==='expense'?'':'';
+  // fix: only show the active one
+  document.getElementById('modal-task').style.display=t==='task'?'block':'none';
+  document.getElementById('modal-expense').style.display=t==='expense'?'block':'none';
+}
+function buildModalRoommates(){
+  selectedWho=[];selectedSplit=state.roommates.map(r=>r.id);
+  document.getElementById('t-who').innerHTML=state.roommates.map(r=>`<button class="who-chip" data-id="${r.id}" onclick="toggleWho(${r.id},this,'who')">${r.name}</button>`).join('');
+  document.getElementById('e-split').innerHTML=state.roommates.map(r=>`<button class="who-chip sel" data-id="${r.id}" onclick="toggleWho(${r.id},this,'split')">${r.name}</button>`).join('');
+  document.getElementById('e-payer').innerHTML=state.roommates.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+}
+function toggleWho(id,btn,group){
+  if(group==='who'){
+    selectedWho=selectedWho.includes(id)?selectedWho.filter(x=>x!==id):[...selectedWho,id];
+    document.querySelectorAll('#t-who .who-chip').forEach(b=>b.classList.toggle('sel',selectedWho.includes(parseInt(b.dataset.id))));
+  }else{
+    selectedSplit=selectedSplit.includes(id)?selectedSplit.filter(x=>x!==id):[...selectedSplit,id];
+    document.querySelectorAll('#e-split .who-chip').forEach(b=>b.classList.toggle('sel',selectedSplit.includes(parseInt(b.dataset.id))));
+  }
+}
+function addTask(){
+  const name=document.getElementById('t-name').value.trim();
+  if(!name){showToast('⚠ Enter a task description');return;}
+  const wStr=document.getElementById('t-week').value||isoStr(tasksWeek,currentYear);
+  state.tasks.unshift({id:++nextId,name,assignee:selectedWho.length?selectedWho:[1],week:wStr,notes:document.getElementById('t-notes').value.trim(),done:false});
+  closeModal();document.getElementById('t-name').value='';document.getElementById('t-notes').value='';
+  const p=wStr.split('-W');if(p.length===2){currentYear=parseInt(p[0]);tasksWeek=parseInt(p[1]);}
+  save();switchTab('tasks',document.querySelectorAll('.nav-btn')[2]);showToast('✓ Task added');
+}
+function addExpense(){
+  const name=document.getElementById('e-name').value.trim();
+  const amt=parseFloat(document.getElementById('e-amt').value);
+  if(!name||isNaN(amt)||amt<=0){showToast('⚠ Fill in name and amount');return;}
+  const today=new Date().toISOString().slice(0,10);
+  state.expenses.unshift({id:++nextId,name,amount:amt,date:today,
+    payer:parseInt(document.getElementById('e-payer').value),
+    cat:document.getElementById('e-cat').value,
+    split:selectedSplit.length?selectedSplit:state.roommates.map(r=>r.id),
+    month:parseInt(document.getElementById('e-month').value),
+    year:currentYear});
+  closeModal();document.getElementById('e-name').value='';document.getElementById('e-amt').value='';
+  save();switchTab('expenses',document.querySelectorAll('.nav-btn')[1]);showToast('✓ Expense added');
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeSettings();closeGoodNews();closeRemoveMember();closeAddMember();}
+});
+
+// ══════════════════════════════════════════════
+// ONBOARDING (Firebase-backed)
+// ══════════════════════════════════════════════
+let obMembers=[];
+let obYourName='';
+
+function obGoStep(id){
+  document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('ob-step-'+id);
+  if(el)el.classList.add('active');
+}
+
+function obNextToMembers(){
+  const hn=document.getElementById('ob-house-name').value.trim();
+  const yn=document.getElementById('ob-your-name').value.trim();
+  if(!hn){document.getElementById('ob-house-name').style.borderColor='var(--red)';document.getElementById('ob-house-name').focus();return;}
+  if(!yn){document.getElementById('ob-your-name').style.borderColor='var(--red)';document.getElementById('ob-your-name').focus();return;}
+  state.flatName=hn;obYourName=yn;
+  obMembers=[{name:yn,self:true}];
+  renderObMembers();obGoStep('create-members');
+  document.getElementById('ob-new-member').focus();
+}
+
+function renderObMembers(){
+  const list=document.getElementById('ob-member-list');
+  list.innerHTML=obMembers.map((m,i)=>`
+    <div class="ob-member-row">
+      <div class="ob-member-av" style="background:${COLORS[i%COLORS.length]}">${m.name.substring(0,2).toUpperCase()}</div>
+      <div class="ob-member-name">${m.name}${m.self?' <span style="font-size:10px;color:var(--ink3)">you</span>':''}</div>
+      ${!m.self?`<button class="ob-member-del" onclick="obRemoveMember(${i})"><i class="ti ti-x" style="font-size:14px"></i></button>`:''}
+    </div>`).join('');
+}
+
+function obAddMember(){
+  const inp=document.getElementById('ob-new-member');
+  const name=inp.value.trim();if(!name)return;
+  if(obMembers.find(m=>m.name.toLowerCase()===name.toLowerCase())){inp.style.borderColor='var(--red)';setTimeout(()=>inp.style.borderColor='',1500);return;}
+  obMembers.push({name,self:false});inp.value='';renderObMembers();inp.focus();
+}
+function obRemoveMember(idx){obMembers.splice(idx,1);renderObMembers();}
+
+async function obFinishCreate(){
+  if(obMembers.length<1){showToast('Add at least yourself!');return;}
+  state.roommates=obMembers.map((m,i)=>({id:i+1,name:m.name,initial:m.name.substring(0,2).toUpperCase(),color:COLORS[i%COLORS.length]}));
+  state.tasks=[];state.expenses=[];state.goodnews=[];
+  state.swaps={};state.cleaningDone={};state.weekComments={};state.holidays={};
+  state.memberEvents=[];state.archivedExpenses=[];
+  const code=generateCode();
+  state.groupCode=code;
+  nextId=100;
+  setSyncStatus('syncing');
+  try{
+    await setDoc(doc(db,'houses',code), sanitizeForFirestore(state));
+    localStorage.setItem('rh_code',code);
+    // First member is "you"
+    if(state.roommates.length)localMemberId=state.roommates[0].id;
+    localStorage.setItem('rh_myname',state.roommates[0]?.name||'');
+    document.getElementById('ob-generated-code').textContent=code;
+    obGoStep('create-code');
+    setSyncStatus('saved');
+  }catch(e){
+    console.error(e);
+    showToast('Error saving to Firebase. Check connection.');
+    setSyncStatus('offline');
+  }
+}
+
+function generateCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let c='';for(let i=0;i<6;i++)c+=chars[Math.floor(Math.random()*chars.length)];
+  return c;
+}
+
+async function obJoinFromStep0(){
+  const code=document.getElementById('ob-join-code-0').value.trim().toUpperCase();
+  const name=document.getElementById('ob-join-name-0').value.trim();
+  const errEl=document.getElementById('ob-join-error-0');
+  errEl.style.display='none';
+  if(code.length!==6){errEl.textContent='The code must be 6 characters.';errEl.style.display='block';document.getElementById('ob-join-code-0').focus();return;}
+  if(!name){document.getElementById('ob-join-name-0').focus();return;}
+  setSyncStatus('syncing');
+  try{
+    const snap=await getDoc(doc(db,'houses',code));
+    if(!snap.exists()){
+      errEl.textContent='House not found. Double-check the code.';
+      errEl.style.display='block';
+      document.getElementById('ob-join-code-0').style.borderColor='var(--red)';
+      setTimeout(()=>document.getElementById('ob-join-code-0').style.borderColor='',2000);
+      setSyncStatus('offline');return;
+    }
+    state=Object.assign(state,snap.data());
+    state.groupCode=code;
+    const exists=state.roommates.find(r=>r.name.toLowerCase()===name.toLowerCase());
+    if(!exists){
+      state.roommates.push({id:++nextId,name,initial:name.substring(0,2).toUpperCase(),color:COLORS[state.roommates.length%COLORS.length]});
+      await setDoc(doc(db,'houses',code), sanitizeForFirestore(state));
+    }
+    localStorage.setItem('rh_code',code);
+    localStorage.setItem('rh_myname',name);
+    // Pre-set member id before obEnterApp
+    const meFound=state.roommates.find(r=>r.name.toLowerCase()===name.toLowerCase());
+    if(meFound)localMemberId=meFound.id;
+    obEnterApp();
+    showToast('Welcome to '+state.flatName+'! 🏠');
+  }catch(e){
+    console.error(e);
+    errEl.textContent='Error connecting to Firebase.';
+    errEl.style.display='block';
+    setSyncStatus('offline');
+  }
+}
+
+function obJoin(){obJoinFromStep0();}
+
+function copyHouseCode(){
+  const code=state.groupCode||'';
+  if(!code)return;
+  navigator.clipboard.writeText(code).then(()=>{
+    showToast('✓ Code '+code+' copied!');
+    // Flash animation on pill
+    const pill=document.getElementById('code-pill');
+    if(pill){
+      pill.style.background='rgba(255,255,255,0.28)';
+      setTimeout(()=>pill.style.background='rgba(255,255,255,0.12)',400);
+    }
+  }).catch(()=>{
+    // Fallback for browsers that block clipboard
+    const ta=document.createElement('textarea');
+    ta.value=code;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('✓ Code '+code+' copied!');
+  });
+}
+
+function obEnterApp(){
+  localStorage.setItem('rh_code',state.groupCode);
+  // Show code pill
+  const pill=document.getElementById('code-pill');
+  const pillText=document.getElementById('code-pill-text');
+  if(pill&&state.groupCode){pill.style.display='flex';if(pillText)pillText.textContent=state.groupCode;}
+  // Try to identify current user from saved name
+  const myName=localStorage.getItem('rh_myname');
+  if(myName){
+    const me=state.roommates.find(r=>r.name.toLowerCase()===myName.toLowerCase());
+    if(me)localMemberId=me.id;
+  }
+  if(!localMemberId&&state.roommates.length)localMemberId=state.roommates[0].id;
+  document.getElementById('onboarding').classList.add('hidden');
+  document.getElementById('flat-name-label').textContent=state.flatName;
+  currentYear=new Date().getFullYear();
+  document.getElementById('year-label').textContent=currentYear;
+  document.getElementById('yr-overview-title').textContent='Full year · '+currentYear;
+  // Start real-time listener
+  subscribeToHouse(state.groupCode);
+  renderSchedule();
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+const savedCode=localStorage.getItem('rh_code');
+if(savedCode){
+  // Try to load from Firestore directly
+  setSyncStatus('syncing');
+  getDoc(doc(db,'houses',savedCode)).then(snap=>{
+    if(snap.exists()){
+      state=Object.assign(state,snap.data());
+      state.groupCode=savedCode;
+      const myName=localStorage.getItem('rh_myname');
+      if(myName){const me=state.roommates.find(r=>r.name.toLowerCase()===myName.toLowerCase());if(me)localMemberId=me.id;}
+      if(!localMemberId&&state.roommates.length)localMemberId=state.roommates[0].id;
+      obEnterApp();
+    }else{
+      // Code no longer exists — show onboarding
+      localStorage.removeItem('rh_code');
+      document.getElementById('onboarding').style.display='flex';
+      setSyncStatus('offline');
+    }
+  }).catch(()=>{
+    document.getElementById('onboarding').style.display='flex';
+    setSyncStatus('offline');
+  });
+}else{
+  document.getElementById('onboarding').style.display='flex';
+}
+
+// Make functions global for inline onclick handlers
+window.changeYear=changeYear;window.changeWeek=changeWeek;window.goToCurrentWeek=goToCurrentWeek;
+window.switchTab=switchTab;window.openModal=openModal;window.closeModal=closeModal;
+window.maybeClose=maybeClose;window.switchModalTab=switchModalTab;
+window.toggleWho=toggleWho;window.addTask=addTask;window.addExpense=addExpense;
+window.toggleTask=toggleTask;window.deleteTask=deleteTask;window.toggleTaskChat=toggleTaskChat;window.sendTaskComment=sendTaskComment;
+window.filterMonth=filterMonth;window.clearExpenseFilter=clearExpenseFilter;
+window.toggleBalance=toggleBalance;window.buildMonthTabs=buildMonthTabs;
+window.openSettings=openSettings;window.closeSettings=closeSettings;
+window.changeFlatName=changeFlatName;window.openRemoveMember=openRemoveMember;
+window.closeRemoveMember=closeRemoveMember;window.selectRemoveOpt=selectRemoveOpt;
+window.confirmRemoveMember=confirmRemoveMember;window.openAddMember=openAddMember;
+window.closeAddMember=closeAddMember;window.selectAddOpt=selectAddOpt;
+window.confirmAddMember=confirmAddMember;window.renderSettingsModal=renderSettingsModal;
+window.openGoodNews=openGoodNews;window.closeGoodNews=closeGoodNews;
+window.submitGoodNews=submitGoodNews;window.deleteGoodNews=deleteGoodNews;
+window.markDone=markDone;window.toggleHoliday=toggleHoliday;window.autoSaveComment=autoSaveComment;
+window.onDragStart=onDragStart;window.onDragOver=onDragOver;
+window.onDragLeave=onDragLeave;window.onDrop=onDrop;window.onDragEnd=onDragEnd;
+window.copyHouseCode=copyHouseCode;window.obGoStep=obGoStep;window.obNextToMembers=obNextToMembers;
+window.obAddMember=obAddMember;window.obRemoveMember=obRemoveMember;
+window.obFinishCreate=obFinishCreate;window.obJoinFromStep0=obJoinFromStep0;
+window.obJoin=obJoin;window.obEnterApp=obEnterApp;
+</script>
+
+<!-- REMOVE MEMBER MODAL -->
+<div class="modal-bg" id="modal-remove-bg" onclick="if(event.target===this)closeRemoveMember()">
+  <div class="member-modal" id="modal-remove-inner">
+    <button class="btn-close" onclick="closeRemoveMember()"><i class="ti ti-x"></i></button>
+    <div class="modal-title" id="remove-modal-title">Remove member</div>
+    <!-- Step 1: show balance + options -->
+    <div id="remove-step-1">
+      <div id="remove-balance-section"></div>
+      <div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">What to do with expenses?</div>
+      <div class="option-card selected" id="opt-keep" onclick="selectRemoveOpt('keep')">
+        <div class="option-card-title">📋 Keep full history</div>
+        <div class="option-card-sub">All past expenses stay visible. Useful to see the full record before they leave.</div>
+      </div>
+      <div class="option-card" id="opt-clear" onclick="selectRemoveOpt('clear')">
+        <div class="option-card-title">🧹 Clear balance &amp; start fresh</div>
+        <div class="option-card-sub">Mark all expenses as settled. The balance resets to zero for everyone.</div>
+      </div>
+      <div class="option-card" id="opt-archive" onclick="selectRemoveOpt('archive')">
+        <div class="option-card-title">📦 Archive their expenses</div>
+        <div class="option-card-sub">Move their expenses to an archive. You can still view them but they won't affect the balance.</div>
+      </div>
+      <button class="btn-primary" style="margin-top:12px" onclick="confirmRemoveMember()">Confirm removal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MEMBER MODAL -->
+<div class="modal-bg" id="modal-add-member-bg" onclick="if(event.target===this)closeAddMember()">
+  <div class="member-modal">
+    <button class="btn-close" onclick="closeAddMember()"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Add new resident</div>
+    <div class="field"><label>Name</label><input id="new-member-name" placeholder="e.g. Sofía" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('new-member-join-date').focus()"></div>
+    <div class="field"><label>Move-in date</label><input id="new-member-join-date" type="date"></div>
+    <div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;margin-top:4px">Expense history for this person</div>
+    <div class="option-card selected" id="opt-add-all" onclick="selectAddOpt('all')">
+      <div class="option-card-title">📋 Show all history</div>
+      <div class="option-card-sub">They can see all past expenses, even before they moved in. Good if joining an established group.</div>
+    </div>
+    <div class="option-card" id="opt-add-from" onclick="selectAddOpt('from')">
+      <div class="option-card-title">📅 Only from move-in date</div>
+      <div class="option-card-sub">Balance and expenses only count from when they joined. Clean start.</div>
+    </div>
+    <button class="btn-primary" style="margin-top:12px" onclick="confirmAddMember()">Add to the house 🏠</button>
+  </div>
+</div>
+
+</body>
+</html>
