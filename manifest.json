@@ -1,0 +1,24 @@
+{
+  "name": "The Red House",
+  "short_name": "Red House",
+  "description": "Shared flat management \u2014 Copenhagen",
+  "start_url": "./TheRedHouse.html",
+  "display": "standalone",
+  "background_color": "#6B1010",
+  "theme_color": "#8B1A1A",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
