@@ -570,6 +570,10 @@ body{font-family:'Inter',sans-serif;background:var(--linen);color:var(--ink);max
 .shop-check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;background:none}
 .shop-check-box.checked{color:#fff;border-color:transparent}
 
+
+.exp-cat-pill{padding:5px 10px;border-radius:12px;border:1.5px solid var(--border);background:none;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;color:var(--ink2);-webkit-tap-highlight-color:transparent;transition:all 0.15s}
+.exp-cat-pill.active{background:var(--red);color:#fff;border-color:var(--red)}
+
 </style>
 </head>
 <body>
@@ -1006,31 +1010,43 @@ body{font-family:'Inter',sans-serif;background:var(--linen);color:var(--ink);max
       <button class="btn-primary" onclick="addTask()">Add urgent task</button>
     </div>
     <div id="modal-expense" style="display:none">
-      <div class="field"><label>Description</label><input id="e-name" placeholder="e.g. Netto groceries" maxlength="120" autocomplete="off"></div>
-      <div class="field"><label>Amount (kr)</label><input id="e-amt" type="number" step="1" min="0" placeholder="0"></div>
-      <div class="field"><label>Category</label>
-        <select id="e-cat">
-          <option value="🛒">🛒 Groceries</option><option value="🧹">🧹 Cleaning</option>
-          <option value="💡">💡 Utilities</option><option value="🍕">🍕 Shared food</option>
-          <option value="🏠">🏠 Rent / fees</option><option value="📦">📦 Other</option>
-        </select>
+      <!-- Row 1: description + amount -->
+      <div style="display:flex;gap:8px">
+        <div class="field" style="flex:2"><label>Description</label><input id="e-name" placeholder="e.g. Netto groceries" maxlength="120" autocomplete="off"></div>
+        <div class="field" style="flex:1"><label>Amount (kr)</label><input id="e-amt" type="number" step="1" min="0" placeholder="0"></div>
       </div>
-      <div class="field"><label>Paid by</label><select id="e-payer"></select></div>
+      <!-- Row 2: category pills -->
+      <div class="field">
+        <label>Category</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px" id="e-cat-pills">
+          <button class="exp-cat-pill active" data-val="🛒" onclick="selectExpCat(this)">🛒 Groceries</button>
+          <button class="exp-cat-pill" data-val="🧹" onclick="selectExpCat(this)">🧹 Cleaning</button>
+          <button class="exp-cat-pill" data-val="💡" onclick="selectExpCat(this)">💡 Utilities</button>
+          <button class="exp-cat-pill" data-val="🍕" onclick="selectExpCat(this)">🍕 Food</button>
+          <button class="exp-cat-pill" data-val="🏠" onclick="selectExpCat(this)">🏠 Rent</button>
+          <button class="exp-cat-pill" data-val="📦" onclick="selectExpCat(this)">📦 Other</button>
+        </div>
+        <input type="hidden" id="e-cat" value="🛒">
+      </div>
+      <!-- Row 3: paid by + month in same line -->
+      <div style="display:flex;gap:8px">
+        <div class="field" style="flex:1"><label>Paid by</label><select id="e-payer"></select></div>
+        <div class="field" style="flex:1"><label>Month</label>
+          <select id="e-month">
+            <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+            <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+            <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+            <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+          </select>
+        </div>
+      </div>
+      <!-- Row 4: split -->
       <div class="field"><label>Split between</label><div class="who-grid" id="e-split"></div></div>
-      <div class="field"><label>Month</label>
-        <select id="e-month">
-          <option value="1">January</option><option value="2">February</option><option value="3">March</option>
-          <option value="4">April</option><option value="5">May</option><option value="6">June</option>
-          <option value="7">July</option><option value="8">August</option><option value="9">September</option>
-          <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-        </select>
-      </div>
-      <!-- Receipt upload -->
+      <!-- Row 5: receipt -->
       <div class="field" style="margin-top:4px">
-        <label>Receipt (optional — photo or PDF)</label>
+        <label>Receipt <span style="color:var(--ink3);font-weight:400">(optional)</span></label>
         <input type="file" id="e-receipt" accept="image/*,application/pdf,image/heic,image/heif"
-          capture="environment"
-          style="font-size:12px;padding:6px 0;color:var(--ink2)"
+          capture="environment" style="font-size:12px;padding:6px 0;color:var(--ink2)"
           onchange="previewExpenseReceipt()">
         <div id="e-receipt-preview" style="margin-top:6px;display:flex;align-items:center;gap:8px;min-height:0"></div>
       </div>
@@ -2065,7 +2081,10 @@ function renderGoodNews(){
   +`<div style="padding-top:12px"><button onclick="openGoodNews()" style="width:100%;padding:10px;background:var(--red-pale);color:var(--red);border:1px dashed var(--red);border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">🌟 Share your good news</button></div>`;
 }
 function openGoodNews(){
-  document.getElementById('gn-author').innerHTML=state.roommates.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+  document.getElementById('gn-author').innerHTML=state.roommates.map(r=>`<option value="${r.id}">${cleanName(r.name)}</option>`).join('');
+  // Default to current user
+  const gnSel=document.getElementById('gn-author');
+  if(localMemberId) gnSel.value=localMemberId;
   document.getElementById('gn-text').value='';
   document.getElementById('modal-gn-bg').classList.add('open');
   setTimeout(()=>document.getElementById('gn-text').focus(),120);
@@ -2280,11 +2299,25 @@ function switchModalTab(t){
   document.getElementById('modal-task').style.display=t==='task'?'block':'none';
   document.getElementById('modal-expense').style.display=t==='expense'?'block':'none';
 }
+
+function selectExpCat(btn){
+  document.querySelectorAll('.exp-cat-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('e-cat').value=btn.dataset.val;
+}
 function buildModalRoommates(){
-  selectedWho=[];selectedSplit=state.roommates.map(r=>r.id);
-  document.getElementById('t-who').innerHTML=state.roommates.map(r=>`<button class="who-chip" data-id="${r.id}" onclick="toggleWho(${r.id},this,'who')">${r.name}</button>`).join('');
-  document.getElementById('e-split').innerHTML=state.roommates.map(r=>`<button class="who-chip sel" data-id="${r.id}" onclick="toggleWho(${r.id},this,'split')">${r.name}</button>`).join('');
-  document.getElementById('e-payer').innerHTML=state.roommates.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+  // Default task assignee = current user
+  selectedWho=localMemberId?[localMemberId]:[];
+  selectedSplit=state.roommates.map(r=>r.id);
+  document.getElementById('t-who').innerHTML=state.roommates.map(r=>`<button class="who-chip${r.id===localMemberId?' sel':''}" data-id="${r.id}" onclick="toggleWho(${r.id},this,'who')">${cleanName(r.name)}</button>`).join('');
+  document.getElementById('e-split').innerHTML=state.roommates.map(r=>`<button class="who-chip sel" data-id="${r.id}" onclick="toggleWho(${r.id},this,'split')">${cleanName(r.name)}</button>`).join('');
+  document.getElementById('e-payer').innerHTML=state.roommates.map(r=>`<option value="${r.id}">${cleanName(r.name)}</option>`).join('');
+  // Default payer = current user
+  const payerSel=document.getElementById('e-payer');
+  if(localMemberId) payerSel.value=localMemberId;
+  // Default month = current month
+  const now=new Date();
+  document.getElementById('e-month').value=now.getMonth()+1;
 }
 function toggleWho(id,btn,group){
   if(group==='who'){
@@ -2354,6 +2387,17 @@ function viewExpenseReceipt(data,type){
     ${t==='pdf'?`<iframe src="${d}" style="width:100%;height:100vh;border:none">`
     :`<img src="${d}" style="max-width:100%;max-height:100vh;object-fit:contain">`}
   <div style="position:fixed;bottom:4px;left:6px;font-size:9px;color:rgba(0,0,0,0.18);pointer-events:none;z-index:1;letter-spacing:0.3px;font-family:Inter,sans-serif">App de JP</div>
+
+<!-- HOUSE PLANS MODAL -->
+<div id="modal-hp-bg" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,0.45);align-items:flex-end" onclick="closeHousePlanModal()">
+  <div onclick="event.stopPropagation()" style="background:var(--white);border-radius:20px 20px 0 0;width:100%;padding:20px 16px 32px;box-sizing:border-box">
+    <div style="font-size:15px;font-weight:700;margin-bottom:14px;color:var(--ink)">🏠 New House Plan</div>
+    <div class="field"><label>Plan</label><input id="hp-name" placeholder="e.g. Paint the living room" maxlength="120" autocomplete="off"></div>
+    <div class="field"><label>When <span style="color:var(--ink3);font-weight:400">(optional)</span></label><input id="hp-date" placeholder="e.g. July 2026" maxlength="40" autocomplete="off"></div>
+    <div class="field"><label>Added by</label><select id="hp-author"></select></div>
+    <button class="btn-primary" onclick="submitHousePlan()">Add plan</button>
+  </div>
+</div>
 
 <!-- ACTIVITY LOG MODAL -->
 <div id="activity-log-modal" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(0,0,0,0.5);align-items:flex-end">
@@ -3042,13 +3086,29 @@ function renderHousePlans(){
 }
 
 function addHousePlan(){
-  const name=prompt('What are you planning?');
-  if(!name||!name.trim())return;
-  const date=prompt('When? (optional, e.g. "July 2026")')||'';
+  // Open modal
+  const sel=document.getElementById('hp-author');
+  if(sel){
+    sel.innerHTML=state.roommates.map(r=>`<option value="${r.id}">${cleanName(r.name)}</option>`).join('');
+    if(localMemberId) sel.value=localMemberId;
+  }
+  document.getElementById('hp-name').value='';
+  document.getElementById('hp-date').value='';
+  document.getElementById('modal-hp-bg').style.display='flex';
+  setTimeout(()=>document.getElementById('hp-name').focus(),120);
+}
+function closeHousePlanModal(){
+  document.getElementById('modal-hp-bg').style.display='none';
+}
+function submitHousePlan(){
+  const name=sanitize(document.getElementById('hp-name').value.trim(),120);
+  if(!name){showToast('Enter a plan description');return;}
+  const date=sanitize(document.getElementById('hp-date').value.trim(),40);
+  const authorId=parseInt(document.getElementById('hp-author').value)||localMemberId||1;
+  const me=state.roommates.find(r=>r.id===authorId);
   if(!state.housePlans)state.housePlans=[];
-  const me=state.roommates.find(r=>r.id===localMemberId);
-  state.housePlans.push({id:++nextId,name:sanitize(name.trim(),120),date:sanitize(date.trim(),40),done:false,addedBy:me?cleanName(me.name):'',ts:new Date().toISOString()});
-  save();renderHousePlans();
+  state.housePlans.push({id:++nextId,name,date,done:false,addedBy:me?cleanName(me.name):'',ts:new Date().toISOString()});
+  closeHousePlanModal();save();renderHousePlans();showToast('✓ Plan added');
 }
 
 function toggleHousePlan(id){
@@ -3698,7 +3758,9 @@ window.setRotationStart=setRotationStart;
 window.toggleBillSection=toggleBillSection;
 window.toggleDoneWeeks=toggleDoneWeeks;
 window.addShoppingItem=addShoppingItem;window.toggleShopItem=toggleShopItem;window.deleteShopItem=deleteShopItem;window.setShopCat=setShopCat;
+window.selectExpCat=selectExpCat;
 window.addHousePlan=addHousePlan;window.toggleHousePlan=toggleHousePlan;window.deleteHousePlan=deleteHousePlan;
+window.submitHousePlan=submitHousePlan;window.closeHousePlanModal=closeHousePlanModal;
 window.deleteExpense=deleteExpense;
 window.openActivityLog=openActivityLog;window.closeActivityLog=closeActivityLog;window.clearActivityLog=clearActivityLog;window.toggleNotifPanel=toggleNotifPanel;
 window.closeNotifPanel=closeNotifPanel;window.clearAllNotifs=clearAllNotifs;
