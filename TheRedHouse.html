@@ -1708,6 +1708,7 @@ function switchSocialSub(sub,btn){
 // ══════════════════════════════════════════════
 let _myCleaningMember=null;
 let _myCleaningDoneOpen=false;
+let _myCleaningFilter='upcoming';
 
 
 // ══════════════════════════════════════════════
@@ -1813,19 +1814,20 @@ function renderMyCleaning(){
 
   let html='';
 
-  // Summary cards — bigger, colorful
+  // Summary cards — bigger, colorful, tappable to filter
+  const _f=_myCleaningFilter;
   html+=`<div style="display:flex;gap:10px;margin-bottom:16px">
-    <div style="flex:1;background:linear-gradient(135deg,${member.color},${shadeColor(member.color,-25)});border-radius:16px;padding:16px 12px;text-align:center;color:#fff;box-shadow:0 4px 14px ${member.color}44">
+    <div onclick="_myCleaningFilter='upcoming';renderMyCleaning()" style="flex:1;background:${_f==='upcoming'?`linear-gradient(135deg,${member.color},${shadeColor(member.color,-25)})`:member.color+'22'};border-radius:16px;padding:16px 12px;text-align:center;color:${_f==='upcoming'?'#fff':member.color};box-shadow:${_f==='upcoming'?'0 4px 14px '+member.color+'44':'none'};cursor:pointer">
       <div class="num-rounded" style="font-size:32px;line-height:1">${upcoming.length}</div>
       <div style="font-size:10px;opacity:0.9;text-transform:uppercase;letter-spacing:0.3px;margin-top:3px">Upcoming</div>
     </div>
-    <div style="flex:1;background:var(--linen);border-radius:16px;padding:16px 12px;text-align:center">
-      <div class="num-rounded" style="font-size:32px;color:var(--ink);line-height:1">${doneCount}</div>
-      <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.3px;margin-top:3px">Done</div>
+    <div onclick="_myCleaningFilter='done';renderMyCleaning()" style="flex:1;background:${_f==='done'?'linear-gradient(135deg,#2D6A4F,#1E4A37)':'var(--linen)'};border-radius:16px;padding:16px 12px;text-align:center;color:${_f==='done'?'#fff':'var(--ink)'};box-shadow:${_f==='done'?'0 4px 14px rgba(45,106,79,0.35)':'none'};cursor:pointer">
+      <div class="num-rounded" style="font-size:32px;line-height:1">${doneCount}</div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.3px;margin-top:3px;${_f==='done'?'opacity:0.9':'color:var(--ink3)'}">Done</div>
     </div>
-    <div style="flex:1;background:var(--linen);border-radius:16px;padding:16px 12px;text-align:center">
-      <div class="num-rounded" style="font-size:32px;color:var(--ink);line-height:1">${myWeeks.length}</div>
-      <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.3px;margin-top:3px">Total</div>
+    <div onclick="_myCleaningFilter='all';renderMyCleaning()" style="flex:1;background:${_f==='all'?'linear-gradient(135deg,#8B1A1A,#5E0F0F)':'var(--linen)'};border-radius:16px;padding:16px 12px;text-align:center;color:${_f==='all'?'#fff':'var(--ink)'};box-shadow:${_f==='all'?'0 4px 14px rgba(139,26,26,0.35)':'none'};cursor:pointer">
+      <div class="num-rounded" style="font-size:32px;line-height:1">${myWeeks.length}</div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.3px;margin-top:3px;${_f==='all'?'opacity:0.9':'color:var(--ink3)'}">Total</div>
     </div>
   </div>`;
 
@@ -1871,19 +1873,28 @@ function renderMyCleaning(){
   const pendingWeeks=myWeeks.filter(m=>!m.done);
   const doneWeeksList=myWeeks.filter(m=>m.done);
 
-  // Upcoming/pending weeks
-  if(pendingWeeks.length){
-    html+=`<div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 6px">Upcoming weeks</div>`;
-    html+=pendingWeeks.map(weekRow).join('');
-  }
-
-  // Completed weeks (collapsed)
-  if(doneWeeksList.length){
-    html+=`<div onclick="_myCleaningDoneOpen=!_myCleaningDoneOpen;renderMyCleaning()" style="display:flex;align-items:center;gap:8px;padding:12px 4px 8px;font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;-webkit-tap-highlight-color:transparent">
-      <i class="ti ti-chevron-${_myCleaningDoneOpen?'down':'right'}" style="transition:transform 0.2s"></i>
-      <span>${doneWeeksList.length} completed</span>
-    </div>`;
-    if(_myCleaningDoneOpen){
+  if(_myCleaningFilter==='upcoming'){
+    if(pendingWeeks.length){
+      html+=`<div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 6px">Upcoming weeks</div>`;
+      html+=pendingWeeks.map(weekRow).join('');
+    }else{
+      html+=`<div style="text-align:center;color:var(--ink3);font-size:13px;padding:24px">No upcoming weeks 🎉</div>`;
+    }
+  }else if(_myCleaningFilter==='done'){
+    if(doneWeeksList.length){
+      html+=`<div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 6px">Completed weeks</div>`;
+      html+=doneWeeksList.map(weekRow).join('');
+    }else{
+      html+=`<div style="text-align:center;color:var(--ink3);font-size:13px;padding:24px">No completed weeks yet</div>`;
+    }
+  }else{
+    // all
+    if(pendingWeeks.length){
+      html+=`<div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 6px">Upcoming weeks</div>`;
+      html+=pendingWeeks.map(weekRow).join('');
+    }
+    if(doneWeeksList.length){
+      html+=`<div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin:14px 0 6px">Completed weeks</div>`;
       html+=doneWeeksList.map(weekRow).join('');
     }
   }
