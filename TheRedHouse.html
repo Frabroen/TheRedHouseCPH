@@ -1954,7 +1954,8 @@ function renderSchedule(){
       if(cleanerOnHoliday){
         inner+=`<div style="background:rgba(255,255,255,0.22);border-radius:14px;padding:12px 16px;margin-top:16px;font-size:14px">🌴 ${cleanName(cleaner.name)} is on holiday — swap this week</div>`;
       }else if(pending){
-        inner+=`<div style="background:rgba(255,255,255,0.22);border-radius:14px;padding:12px 16px;margin-top:16px;font-size:14px">⏳ Swap pending confirmation</div>`;
+        inner+=`<div style="background:rgba(255,255,255,0.22);border-radius:14px;padding:12px 16px;margin-top:16px;font-size:14px">⏳ Swap pending confirmation</div>
+        <button onclick="cancelSwapForWeek(${wn})" style="background:rgba(255,255,255,0.25);border:none;color:#fff;padding:9px 18px;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;margin-top:12px">✕ Cancel swap</button>`;
       }else{
         // Big done button
         inner+=`<button onclick="${isDone?`toggleYearDone('${key}',true)`:`markDone('${key}')`};renderSchedule()"
@@ -1962,7 +1963,10 @@ function renderSchedule(){
           <i class="ti ti-${isDone?'arrow-back-up':'check'}" style="font-size:38px;color:${isDone?'#fff':(cleaner.color)}"></i>
         </button>
         <div style="font-size:12px;opacity:0.85;margin-top:8px">${isDone?'Tap to undo':'Tap when done'}</div>
-        <button onclick="openWeekDetail(${wn})" style="margin-top:14px;background:rgba(255,255,255,0.2);border:none;color:#fff;padding:8px 18px;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">⚙ Manage week</button>`;
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button onclick="openSwapPicker(${wn})" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:9px 18px;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;display:flex;align-items:center;gap:6px"><i class="ti ti-arrows-exchange"></i> Swap</button>
+          <button onclick="openWeekDetail(${wn})" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:9px 18px;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;display:flex;align-items:center;gap:6px"><i class="ti ti-settings"></i> Manage</button>
+        </div>`;
       }
       inner+='</div>';
     }
