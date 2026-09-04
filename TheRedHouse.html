@@ -1928,6 +1928,8 @@ function renderSchedule(){
 
   const hero=document.getElementById('week-hero');
   if(hero){
+    hero.style.cursor='pointer';
+    hero.onclick=(e)=>{if(!e.target.closest('button'))openWeekDetail(wn);};
     const bg=isDone?'linear-gradient(135deg,#7BA05B,#5A7D42)'
       :pending?'linear-gradient(135deg,#E8A33D,#C77E1A)'
       :cleaner?`linear-gradient(135deg,${cleaner.color},${shadeColor(cleaner.color,-30)})`
