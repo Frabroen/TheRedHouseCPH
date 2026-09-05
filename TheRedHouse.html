@@ -942,6 +942,7 @@ input, textarea, select{border-radius:14px !important}
 
   <!-- SCHEDULE -->
   <div class="section active" id="sec-schedule">
+    <div id="swap-banners-top"></div>
     <!-- Colorful hero for the selected week -->
     <div class="week-hero" id="week-hero"></div>
     <!-- Holiday toggle -->
@@ -1539,6 +1540,7 @@ function setSyncStatus(s){
 }
 
 function refreshCurrentTab(){
+  renderSwapBanners();
   if(currentTab==='mycleaning')renderMyCleaning();
   if(currentTab==='social'){
     if(_socialSub==='chat')renderHouseChat();
@@ -1912,6 +1914,36 @@ function shadeColor(hex,percent){
   return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 
+
+function renderSwapBanners(){
+  const cont=document.getElementById('swap-banners-top');
+  if(!cont)return;
+  resolveLocalMember();
+  if(!state.pendingSwaps||!Object.keys(state.pendingSwaps).length){cont.innerHTML='';return;}
+  let html='';
+  Object.values(state.pendingSwaps).forEach(sw=>{
+    const pA=rm(sw.personA), pB=rm(sw.personB);
+    const iAmInvolved=(localMemberId===sw.personA||localMemberId===sw.personB);
+    const iConfirmed=(sw.confirmedBy||[]).includes(localMemberId);
+    html+=`<div class="swap-confirm-banner">
+      <div class="sc-title">🔄 Swap pending confirmation</div>
+      <div class="sc-desc">W${sw.weekA} (${cleanName(pA?.name||'?')}) ↔ W${sw.weekB} (${cleanName(pB?.name||'?')})</div>`;
+    if(iAmInvolved&&!iConfirmed){
+      html+=`<div class="sc-btns">
+        <button class="sc-yes" onclick="confirmSwap('${sw.id}')">✓ Confirm</button>
+        <button class="sc-no" onclick="rejectSwap('${sw.id}')">✕ Reject</button>
+      </div>`;
+    }else if(iAmInvolved&&iConfirmed){
+      html+=`<div class="sc-wait">✓ You confirmed — waiting for the other person</div>`;
+    }else{
+      const waitingFor=[sw.personA,sw.personB].filter(id=>!(sw.confirmedBy||[]).includes(id)).map(id=>cleanName(rm(id)?.name||'?')).join(' & ');
+      html+=`<div class="sc-wait">Waiting for ${waitingFor} to confirm<br><button class="sc-no" style="margin-top:6px;width:auto;padding:5px 12px" onclick="rejectSwap('${sw.id}')">Cancel swap</button></div>`;
+    }
+    html+='</div>';
+  });
+  cont.innerHTML=html;
+}
+
 function renderSchedule(){
   // Hero ALWAYS shows the current week (most important info)
   const wn=currentWeekNum,year=new Date().getFullYear();
@@ -2067,7 +2099,7 @@ function renderYearList(){
     Object.values(state.pendingSwaps).forEach(sw=>{
       const pA=rm(sw.personA), pB=rm(sw.personB);
       const iAmInvolved=(localMemberId===sw.personA||localMemberId===sw.personB);
-      const iConfirmed=sw.confirmedBy.includes(localMemberId);
+      const iConfirmed=(sw.confirmedBy||[]).includes(localMemberId);
       html+=`<div class="swap-confirm-banner">
         <div class="sc-title">🔄 Swap pending confirmation</div>
         <div class="sc-desc">W${sw.weekA} (${cleanName(pA?.name||'?')}) ↔ W${sw.weekB} (${cleanName(pB?.name||'?')})</div>`;
@@ -4034,21 +4066,32 @@ function logActivity(icon, text){
   save();
 }
 
+let _logFilter='all';
 function renderActivityLog(){
   const el=document.getElementById('activity-log-list');
   if(!el)return;
-  // Show only entries from this member
-  const myLog=(state.activityLog||[]).filter(l=>l.memberId===localMemberId);
-  if(!myLog.length){
+  const all=(state.activityLog||[]);
+
+  // Filter chips
+  const filterEl=document.getElementById('activity-log-filter');
+  if(filterEl){
+    filterEl.innerHTML=`<button onclick="_logFilter='all';renderActivityLog()" style="flex-shrink:0;padding:6px 12px;border-radius:14px;border:1.5px solid var(--red);background:${_logFilter==='all'?'var(--red)':'transparent'};color:${_logFilter==='all'?'#fff':'var(--red)'};font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Everyone</button>`
+      +state.roommates.map(r=>`<button onclick="_logFilter=${r.id};renderActivityLog()" style="flex-shrink:0;padding:6px 12px;border-radius:14px;border:1.5px solid ${r.color};background:${_logFilter===r.id?r.color:'transparent'};color:${_logFilter===r.id?'#fff':r.color};font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">${cleanName(r.name)}</button>`).join('');
+  }
+
+  const filtered=_logFilter==='all'?all:all.filter(l=>l.memberId===_logFilter);
+  if(!filtered.length){
     el.innerHTML='<div style="font-size:12px;color:var(--ink3);padding:8px 0">No activity yet</div>';
     return;
   }
-  el.innerHTML=myLog.map(l=>{
+  el.innerHTML=filtered.map(l=>{
     const d=new Date(l.ts);
     const t=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    const who=rm(l.memberId);
+    const whoTag=_logFilter==='all'&&who?`<span style="color:${who.color};font-weight:600">${cleanName(who.name)}</span> · `:'';
     return `<div class="log-item">
       <div class="log-icon">${l.icon||'📋'}</div>
-      <div class="log-text">${l.text}<div class="log-time">${t}</div></div>
+      <div class="log-text">${whoTag}${l.text}<div class="log-time">${t}</div></div>
     </div>`;
   }).join('');
 }
@@ -4636,7 +4679,7 @@ window.renderMyCleaning=renderMyCleaning;
 window.sendHouseChat=sendHouseChat;window.renderHouseChat=renderHouseChat;window.switchSocialSub=switchSocialSub;
 window.undoLastAction=undoLastAction;
 window.openWeekDetail=openWeekDetail;window.closeWeekDetail=closeWeekDetail;window.toggleWeekHoliday=toggleWeekHoliday;window.saveWeekNote=saveWeekNote;
-window.confirmSwap=confirmSwap;window.rejectSwap=rejectSwap;
+window.confirmSwap=confirmSwap;window.renderSwapBanners=renderSwapBanners;window.rejectSwap=rejectSwap;
 window.openSwapPicker=openSwapPicker;window.cancelSwapForWeek=cancelSwapForWeek;window.closeSwapPicker=closeSwapPicker;window.doSwap=doSwap;
 window.addShoppingItem=addShoppingItem;window.toggleShopItem=toggleShopItem;window.deleteShopItem=deleteShopItem;window.setShopCat=setShopCat;
 window.closeShopModal=closeShopModal;window.submitShopItem=submitShopItem;window.selectShopCat=selectShopCat;
@@ -4866,6 +4909,7 @@ window.openColorPicker=openColorPicker;window.selectColor=selectColor;window.clo
         <button onclick="closeActivityLog()" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:22px;line-height:1">×</button>
       </div>
     </div>
+    <div id="activity-log-filter" style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px 16px 10px"></div>
     <div id="activity-log-list" style="overflow-y:auto;padding:8px 16px 24px;flex:1"></div>
   </div>
 </div>
