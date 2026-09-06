@@ -1917,31 +1917,7 @@ function shadeColor(hex,percent){
 
 function renderSwapBanners(){
   const cont=document.getElementById('swap-banners-top');
-  if(!cont)return;
-  resolveLocalMember();
-  if(!state.pendingSwaps||!Object.keys(state.pendingSwaps).length){cont.innerHTML='';return;}
-  let html='';
-  Object.values(state.pendingSwaps).forEach(sw=>{
-    const pA=rm(sw.personA), pB=rm(sw.personB);
-    const iAmInvolved=(localMemberId===sw.personA||localMemberId===sw.personB);
-    const iConfirmed=(sw.confirmedBy||[]).includes(localMemberId);
-    html+=`<div class="swap-confirm-banner">
-      <div class="sc-title">🔄 Swap pending confirmation</div>
-      <div class="sc-desc">W${sw.weekA} (${cleanName(pA?.name||'?')}) ↔ W${sw.weekB} (${cleanName(pB?.name||'?')})</div>`;
-    if(iAmInvolved&&!iConfirmed){
-      html+=`<div class="sc-btns">
-        <button class="sc-yes" onclick="confirmSwap('${sw.id}')">✓ Confirm</button>
-        <button class="sc-no" onclick="rejectSwap('${sw.id}')">✕ Reject</button>
-      </div>`;
-    }else if(iAmInvolved&&iConfirmed){
-      html+=`<div class="sc-wait">✓ You confirmed — waiting for the other person</div>`;
-    }else{
-      const waitingFor=[sw.personA,sw.personB].filter(id=>!(sw.confirmedBy||[]).includes(id)).map(id=>cleanName(rm(id)?.name||'?')).join(' & ');
-      html+=`<div class="sc-wait">Waiting for ${waitingFor} to confirm<br><button class="sc-no" style="margin-top:6px;width:auto;padding:5px 12px" onclick="rejectSwap('${sw.id}')">Cancel swap</button></div>`;
-    }
-    html+='</div>';
-  });
-  cont.innerHTML=html;
+  if(cont)cont.innerHTML='';
 }
 
 function renderSchedule(){
@@ -1956,7 +1932,7 @@ function renderSchedule(){
   const isDone=!!(state.cleaningDone&&state.cleaningDone[key]);
   const holidays=(state.holidays&&state.holidays[key])||[];
   const cleanerOnHoliday=cleaner&&holidays.includes(cleaner.id);
-  const pending=pendingSwapForWeek(wn,year);
+  const heroSwap=pendingSwapForWeek(wn,year);
 
   const hero=document.getElementById('week-hero');
   if(hero){
@@ -1981,14 +1957,13 @@ function renderSchedule(){
         <div style="font-size:14px;opacity:0.85;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">It's your turn</div>
         <div style="font-size:34px;font-weight:800;font-family:'Playfair Display',serif;line-height:1.05;margin-bottom:6px">${cleanName(cleaner.name)}</div>
         <div style="font-size:15px;opacity:0.9;display:flex;align-items:center;gap:6px">🧹 House cleaning${isDone?' <span style="font-weight:700">· done ✓</span>':''}</div>
+        ${heroSwap?`<div style="font-size:13px;opacity:0.9;margin-top:4px;background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:12px">🔄 Swapped with Week ${heroSwap.swappedWith} · <span onclick="cancelSwapForWeek(${wn});event.stopPropagation()" style="text-decoration:underline;cursor:pointer">undo</span></div>`:''}
         ${!isDone&&!cleanerOnHoliday?`<div style="background:rgba(0,0,0,0.18);border-radius:12px;padding:8px 16px;margin-top:12px;font-size:15px;font-weight:700;letter-spacing:0.3px">⏳ PENDING CLEANING</div>`:''}`;
 
       if(cleanerOnHoliday){
         inner+=`<div style="background:rgba(255,255,255,0.22);border-radius:14px;padding:12px 16px;margin-top:16px;font-size:14px">🌴 ${cleanName(cleaner.name)} is on holiday — swap this week</div>`;
-      }else if(pending){
-        inner+=`<div style="background:rgba(255,255,255,0.22);border-radius:14px;padding:12px 16px;margin-top:16px;font-size:14px">⏳ Swap pending confirmation</div>
-        <button onclick="cancelSwapForWeek(${wn})" style="background:rgba(255,255,255,0.25);border:none;color:#fff;padding:9px 18px;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;margin-top:12px">✕ Cancel swap</button>`;
-      }else{
+      }
+      {
         // Big done button
         inner+=`<button onclick="${isDone?`toggleYearDone('${key}',true)`:`markDone('${key}')`};renderSchedule()"
           style="margin-top:20px;width:72px;height:72px;border-radius:50%;border:none;cursor:pointer;background:${isDone?'rgba(255,255,255,0.25)':'rgba(255,255,255,0.95)'};display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,0.25);-webkit-tap-highlight-color:transparent">
@@ -2051,23 +2026,20 @@ function renderYearList(){
     const isNow=(w===cw&&year===cy);
     const d=start.getDate()+'/'+(start.getMonth()+1);
     const pending=pendingSwapForWeek(w,year);
-    const pendingPartlyConfirmed=pending&&pending.confirmedBy&&pending.confirmedBy.length>=1&&pending.confirmedBy.length<2;
-    const asteriskColor=pendingPartlyConfirmed?'#174EA6':'var(--red)';
+    const swapInfo=pendingSwapForWeek(w,year);
     const holBadges=holidays.map(id=>{const r=rm(id);return r?`<span class="yr2-hol-badge" style="background:${r.color}">🌴 ${cleanName(r.name)}</span>`:'';}).join('');
-    return `<div class="yr2-row${isNow?' is-now':''}${done?' is-done':''}${pending?' is-pending':''}" data-week="${w}" style="${pending?`border-color:${asteriskColor};`:''}cursor:pointer" onclick="openWeekDetail(${w})">
-      <span class="yr2-marker">${pending?`<span style="color:${asteriskColor};font-size:20px;font-weight:800">*</span>`:''}</span>
-      <div style="width:50px;height:50px;border-radius:14px;background:${done?'var(--linen)':(pending?'#E8A33D':(p?p.color:'#999'))};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:#fff">
+    return `<div class="yr2-row${isNow?' is-now':''}${done?' is-done':''}" data-week="${w}" style="cursor:pointer" onclick="openWeekDetail(${w})">
+      <span class="yr2-marker">${swapInfo?`<span style="color:var(--red);font-size:20px;font-weight:800">*</span>`:''}</span>
+      <div style="width:50px;height:50px;border-radius:14px;background:${done?'var(--linen)':(p?p.color:'#999')};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:#fff">
         <span class="num-rounded" style="font-size:19px;line-height:1">${w}</span>
         <span style="font-size:8px;opacity:0.9;text-transform:uppercase">week</span>
       </div>
       <div class="yr2-person" style="flex-direction:column;align-items:flex-start;gap:1px">
-        ${p?`<span class="yr2-name">${cleanName(p.name)}${pending?' <span style="font-size:10px;color:#E8A33D;font-weight:700">(pending)</span>':''}</span><span style="font-size:11px;color:var(--ink3)">${d}</span>`:'<span style="color:var(--border)">— skipped —</span>'}
+        ${p?`<span class="yr2-name">${cleanName(p.name)}</span><span style="font-size:11px;color:var(--ink3)">${d}${swapInfo?` · <span style="color:var(--red);font-weight:700;font-size:10px">↔ W${swapInfo.swappedWith}</span>`:''}</span>`:'<span style="color:var(--border)">— skipped —</span>'}
       </div>
       <div class="yr2-badges">${holBadges}${isNow?'<span class="yr2-hol-badge" style="background:var(--red)">NOW</span>':''}</div>
       <div class="yr2-actions" onclick="event.stopPropagation()">
-        ${pending?`<button class="yr2-swap-btn" title="Cancel swap" onclick="cancelSwapForWeek(${w})" style="border-color:var(--red);color:var(--red)">
-          <i class="ti ti-x"></i>
-        </button>`:!done?`<button class="yr2-swap-btn" title="Swap this week" onclick="openSwapPicker(${w})">
+        ${!done?`<button class="yr2-swap-btn" title="Swap this week" onclick="openSwapPicker(${w})">
           <i class="ti ti-arrows-exchange"></i>
         </button>`:''}
         ${done?`<button class="yr2-btn undone" title="Undo" onclick="window.toggleYearDone('${k}',true)">
@@ -2092,31 +2064,6 @@ function renderYearList(){
   }
 
   let html='';
-
-  // Pending swap confirmation banners
-  if(state.pendingSwaps){
-    resolveLocalMember();
-    Object.values(state.pendingSwaps).forEach(sw=>{
-      const pA=rm(sw.personA), pB=rm(sw.personB);
-      const iAmInvolved=(localMemberId===sw.personA||localMemberId===sw.personB);
-      const iConfirmed=(sw.confirmedBy||[]).includes(localMemberId);
-      html+=`<div class="swap-confirm-banner">
-        <div class="sc-title">🔄 Swap pending confirmation</div>
-        <div class="sc-desc">W${sw.weekA} (${cleanName(pA?.name||'?')}) ↔ W${sw.weekB} (${cleanName(pB?.name||'?')})</div>`;
-      if(iAmInvolved&&!iConfirmed){
-        html+=`<div class="sc-btns">
-          <button class="sc-yes" onclick="confirmSwap('${sw.id}')">✓ Confirm</button>
-          <button class="sc-no" onclick="rejectSwap('${sw.id}')">✕ Reject</button>
-        </div>`;
-      }else if(iAmInvolved&&iConfirmed){
-        html+=`<div class="sc-wait">✓ You confirmed — waiting for the other person</div>`;
-      }else{
-        const waitingFor=[sw.personA,sw.personB].filter(id=>!sw.confirmedBy.includes(id)).map(id=>cleanName(rm(id)?.name||'?')).join(' & ');
-        html+=`<div class="sc-wait">Waiting for ${waitingFor} to confirm<br><button class="sc-no" style="margin-top:6px;width:auto;padding:5px 12px" onclick="rejectSwap('${sw.id}')">Cancel swap</button></div>`;
-      }
-      html+='</div>';
-    });
-  }
 
   // Toolbar: undo + reset
   html+=`<div class="yr2-toolbar">
@@ -2326,11 +2273,21 @@ let _swapSourceWeek=null;
 
 
 function cancelSwapForWeek(w){
-  const sw=pendingSwapForWeek(w,currentYear);
-  if(!sw)return;
-  if(!confirm('Cancel this pending swap?'))return;
-  rejectSwap(sw.id);
+  const year=currentYear;
+  const info=state.swapInfo&&state.swapInfo[isoStr(w,year)];
+  if(!info)return;
+  if(!confirm('Undo this swap? Both weeks return to the original rotation.'))return;
+  const other=info.swappedWith;
+  // Remove both swap entries and info
+  delete state.swaps[isoStr(w,year)];
+  delete state.swaps[isoStr(other,year)];
+  delete state.swapInfo[isoStr(w,year)];
+  delete state.swapInfo[isoStr(other,year)];
+  logActivity('↩','Swap undone: W'+w+' ↔ W'+other);
+  save();renderSchedule();
+  showToast('Swap undone');
 }
+
 
 function openSwapPicker(w){
   _swapSourceWeek=w;
@@ -2386,65 +2343,36 @@ function doSwap(targetWeek){
 }
 
 function swapWeeks(wA,wB){
-  _lastAction={type:'swap',prevSwaps:JSON.parse(JSON.stringify(state.swaps||{})),prevPending:JSON.parse(JSON.stringify(state.pendingSwaps||{}))};
+  _lastAction={type:'swap',prevSwaps:JSON.parse(JSON.stringify(state.swaps||{})),prevSwapInfo:JSON.parse(JSON.stringify(state.swapInfo||{}))};
   const year=currentYear;
   const personA=cleanerForWeek(wA,year);
   const personB=cleanerForWeek(wB,year);
   if(!personA||!personB){showToast('Cannot swap these weeks');return;}
   if(personA.id===personB.id){showToast('Same person — nothing to swap');return;}
-  // Create pending swap needing confirmation from both
-  if(!state.pendingSwaps)state.pendingSwaps={};
-  const swapId='sw_'+Date.now();
-  state.pendingSwaps[swapId]={
-    id:swapId,
-    weekA:wA, weekB:wB,
-    personA:personA.id, personB:personB.id,
-    confirmedBy:[localMemberId].filter(Boolean),
-    ts:new Date().toISOString(),
-    initiator:localMemberId
-  };
-  addNotif('swap','Swap requested: W'+wA+' ('+cleanName(personA.name)+') ↔ W'+wB+' ('+cleanName(personB.name)+'). Both must confirm.','🔄');
+  // Apply swap directly
+  if(!state.swaps)state.swaps={};
+  state.swaps[isoStr(wB,year)]=personA.id;
+  state.swaps[isoStr(wA,year)]=personB.id;
+  // Record swap origin for the red asterisk note
+  if(!state.swapInfo)state.swapInfo={};
+  state.swapInfo[isoStr(wA,year)]={swappedWith:wB};
+  state.swapInfo[isoStr(wB,year)]={swappedWith:wA};
+  logActivity('🔄','Week swap: W'+wA+' ↔ W'+wB);
   save();renderSchedule();
-  showToast('🔄 Swap requested — needs confirmation from both');
+  showToast('✓ Weeks swapped: W'+wA+' ↔ W'+wB);
 }
 
-function confirmSwap(swapId){
-  const sw=state.pendingSwaps&&state.pendingSwaps[swapId];
-  if(!sw)return;
-  resolveLocalMember();
-  if(!sw.confirmedBy.includes(localMemberId)) sw.confirmedBy.push(localMemberId);
-  // Check if both parties confirmed
-  const needed=[sw.personA,sw.personB];
-  const allConfirmed=needed.every(id=>sw.confirmedBy.includes(id));
-  if(allConfirmed){
-    // Apply the swap
-    const year=currentYear;
-    if(!state.swaps)state.swaps={};
-    state.swaps[isoStr(sw.weekB,year)]=sw.personA;
-    state.swaps[isoStr(sw.weekA,year)]=sw.personB;
-    delete state.pendingSwaps[swapId];
-    logActivity('🔄','Week swap confirmed: W'+sw.weekA+' ↔ W'+sw.weekB);
-    addNotif('swap','Swap confirmed: W'+sw.weekA+' ↔ W'+sw.weekB,'✅');
-    showToast('✓ Swap confirmed and applied!');
-  }else{
-    showToast('✓ Your confirmation saved — waiting for the other person');
-  }
-  save();renderSchedule();
-}
 
-function rejectSwap(swapId){
-  const sw=state.pendingSwaps&&state.pendingSwaps[swapId];
-  if(!sw)return;
-  delete state.pendingSwaps[swapId];
-  addNotif('swap','Swap rejected: W'+sw.weekA+' ↔ W'+sw.weekB,'❌');
-  save();renderSchedule();
-  showToast('Swap cancelled');
-}
+
+
+
 
 // Get pending swap affecting a week (if any)
 function pendingSwapForWeek(w,year){
-  if(!state.pendingSwaps)return null;
-  return Object.values(state.pendingSwaps).find(sw=>sw.weekA===w||sw.weekB===w)||null;
+  // Now returns swap info (the week it was swapped with), or null
+  if(!state.swapInfo)return null;
+  const info=state.swapInfo[isoStr(w,year)];
+  return info?{swappedWith:info.swappedWith}:null;
 }
 
 function buildMonthTabs(){
@@ -4679,7 +4607,7 @@ window.renderMyCleaning=renderMyCleaning;
 window.sendHouseChat=sendHouseChat;window.renderHouseChat=renderHouseChat;window.switchSocialSub=switchSocialSub;
 window.undoLastAction=undoLastAction;
 window.openWeekDetail=openWeekDetail;window.closeWeekDetail=closeWeekDetail;window.toggleWeekHoliday=toggleWeekHoliday;window.saveWeekNote=saveWeekNote;
-window.confirmSwap=confirmSwap;window.renderSwapBanners=renderSwapBanners;window.rejectSwap=rejectSwap;
+window.renderSwapBanners=renderSwapBanners;
 window.openSwapPicker=openSwapPicker;window.cancelSwapForWeek=cancelSwapForWeek;window.closeSwapPicker=closeSwapPicker;window.doSwap=doSwap;
 window.addShoppingItem=addShoppingItem;window.toggleShopItem=toggleShopItem;window.deleteShopItem=deleteShopItem;window.setShopCat=setShopCat;
 window.closeShopModal=closeShopModal;window.submitShopItem=submitShopItem;window.selectShopCat=selectShopCat;
