@@ -1939,7 +1939,7 @@ function renderSchedule(){
     hero.style.cursor='pointer';
     hero.onclick=(e)=>{if(!e.target.closest('button'))openWeekDetail(wn);};
     const bg=isDone?'linear-gradient(135deg,#7BA05B,#5A7D42)'
-      :pending?'linear-gradient(135deg,#E8A33D,#C77E1A)'
+      :heroSwap?'linear-gradient(135deg,#8B1A1A,#5E0F0F)'
       :cleaner?`linear-gradient(135deg,${cleaner.color},${shadeColor(cleaner.color,-30)})`
       :'linear-gradient(135deg,#888,#666)';
     hero.style.background=bg;
@@ -2811,16 +2811,18 @@ function setRotationStart(){
 function resetSchedule(){
   if(!confirm('⚠ Reset the cleaning rotation?\n\nThis restores the automatic schedule and removes all manual swaps. Completed weeks stay marked.'))return;
   if(!state.swaps)state.swaps={};
-  // Clear all swaps from W28 onward for current year
-  for(let w=28;w<=52;w++) delete state.swaps[currentYear+'-W'+w];
-  // Also reset the cleaned flag so it re-runs
+  if(!state.swapInfo)state.swapInfo={};
+  // Clear all swaps and swap info from W28 onward for current year
+  for(let w=28;w<=53;w++){
+    delete state.swaps[currentYear+'-W'+w];
+    delete state.swapInfo[currentYear+'-W'+w];
+  }
   state._swapsCleanedV2=true;
   save();
-  // Reset year list scroll so it goes back to current week
   const container=document.getElementById('year-overview-list');
   if(container) delete container.dataset.scrolled;
   renderSchedule();
-  showToast('✓ Rotation reset to algorithm');
+  showToast('✓ Rotation reset — holidays respected');
 }
 function changeFlatName(){
   const n=prompt('House name:',state.flatName);
