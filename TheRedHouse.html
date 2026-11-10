@@ -1424,6 +1424,15 @@ let modalTab          ='task';
 let selectedWho       =[];
 let selectedSplit     =[];
 let nextId            =1000;
+// Recompute nextId as (max existing id across all collections)+1 so new uploads never collide
+function recomputeNextId(){
+  let maxId=1000;
+  const scan=arr=>{ if(Array.isArray(arr)) arr.forEach(o=>{ if(o&&typeof o.id==='number'&&o.id>maxId)maxId=o.id; }); };
+  scan(state.expenses); scan(state.bills); scan(state.tasks); scan(state.goodnews);
+  scan(state.shopping); scan(state.housePlans); scan(state.archivedExpenses);
+  if(state.houseChat)scan(state.houseChat);
+  nextId=maxId;
+}
 let toastTimer;
 let balanceOpen       =false;
 let commentTimer;
@@ -1479,6 +1488,7 @@ function subscribeToHouse(code){
       if(data){
         state=Object.assign(state, data);
         state.groupCode=code;
+        recomputeNextId();
 
         // Always ensure W26=José and W27=Isabell as fixed swaps
         if(state.roommates&&state.roommates.length>=2){
@@ -3018,8 +3028,19 @@ function previewExpenseReceipt(){
     expReceiptType='image';
     const img=new Image();
     const url=URL.createObjectURL(file);
+    const fallback=()=>{
+      const reader=new FileReader();
+      reader.onload=e=>{
+        expReceiptData=e.target.result;expReceiptType='image';
+        prev.innerHTML=`<img src="${expReceiptData}" style="height:50px;border-radius:5px;cursor:pointer;object-fit:cover" onclick="viewExpenseReceipt()">
+          <div style="font-size:10px;color:var(--ink3)">original ${sizeKb}KB</div>
+          <button onclick="clearExpenseReceipt()" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px">✕</button>`;
+      };
+      reader.readAsDataURL(file);
+    };
     img.onload=()=>{
       URL.revokeObjectURL(url);
+      if(!img.width||!img.height){fallback();return;}
       const MAX=1000;
       let w=img.width,h=img.height;
       if(w>MAX||h>MAX){const r=Math.min(MAX/w,MAX/h);w=Math.round(w*r);h=Math.round(h*r);}
@@ -3028,12 +3049,15 @@ function previewExpenseReceipt(){
       const ctx=canvas.getContext('2d');
       ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
       ctx.drawImage(img,0,0,w,h);
-      expReceiptData=canvas.toDataURL('image/jpeg',0.35);
+      try{ expReceiptData=canvas.toDataURL('image/jpeg',0.35); }
+      catch(err){ fallback(); return; }
+      if(!expReceiptData||expReceiptData.length<100){ fallback(); return; }
       const compKb=(expReceiptData.length*0.75/1024).toFixed(0);
       prev.innerHTML=`<img src="${expReceiptData}" style="height:50px;border-radius:5px;cursor:pointer;object-fit:cover" onclick="viewExpenseReceipt()">
         <div style="font-size:10px;color:var(--ink3)">${sizeKb}KB → ${compKb}KB</div>
         <button onclick="clearExpenseReceipt()" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px">✕</button>`;
     };
+    img.onerror=()=>{ URL.revokeObjectURL(url); fallback(); };
     img.src=url;
   }
 }
@@ -3424,6 +3448,7 @@ async function obJoinFromStep0(){
 
     state=Object.assign(state, data);
     state.groupCode=code;
+    recomputeNextId();
     const exists=state.roommates.find(r=>r.name.toLowerCase()===name.toLowerCase());
     if(!exists){
       state.roommates.push({id:++nextId,name,initial:name.substring(0,2).toUpperCase(),color:COLORS[state.roommates.length%COLORS.length]});
@@ -3586,24 +3611,46 @@ function previewBill(){
     reader.readAsDataURL(file);
   } else {
     billPreviewType='image';
+    document.getElementById('bill-preview').innerHTML='<div style="font-size:12px;color:var(--ink3)">Processing…</div>';
     // Compress image via canvas
     const img=new Image();
     const url=URL.createObjectURL(file);
     img.onload=()=>{
       URL.revokeObjectURL(url);
+      if(!img.width||!img.height){billFallbackRead(file,sizeKb);return;}
       const MAX=800;
       let w=img.width, h=img.height;
       if(w>MAX||h>MAX){ const r=Math.min(MAX/w,MAX/h); w=Math.round(w*r); h=Math.round(h*r); }
       const canvas=document.createElement('canvas');
       canvas.width=w; canvas.height=h;
-      canvas.getContext('2d').drawImage(img,0,0,w,h);
-      billPreviewData=canvas.toDataURL('image/jpeg',0.4);
+      const ctx=canvas.getContext('2d');
+      ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
+      ctx.drawImage(img,0,0,w,h);
+      try{
+        billPreviewData=canvas.toDataURL('image/jpeg',0.4);
+      }catch(err){ billFallbackRead(file,sizeKb); return; }
+      if(!billPreviewData||billPreviewData.length<100){ billFallbackRead(file,sizeKb); return; }
       const compKb=(billPreviewData.length*0.75/1024).toFixed(0);
       document.getElementById('bill-preview').innerHTML=`<img src="${billPreviewData}" style="max-width:100%;max-height:120px;border-radius:6px;object-fit:contain">`;
       document.getElementById('bill-size-info').textContent=`Original: ${sizeKb} KB → Compressed: ${compKb} KB`;
     };
+    img.onerror=()=>{ URL.revokeObjectURL(url); billFallbackRead(file,sizeKb); };
     img.src=url;
   }
+}
+
+// Fallback: store the original file as-is (e.g. HEIC the canvas can't decode)
+function billFallbackRead(file,sizeKb){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    billPreviewData=e.target.result;
+    billPreviewType='image';
+    const el=document.getElementById('bill-preview');
+    if(el)el.innerHTML=`<img src="${billPreviewData}" style="max-width:100%;max-height:120px;border-radius:6px;object-fit:contain" onerror="this.outerHTML='<div style=&quot;font-size:28px&quot;>🖼️</div>'">`;
+    const si=document.getElementById('bill-size-info');
+    if(si)si.textContent='Stored original · '+sizeKb+' KB';
+  };
+  reader.readAsDataURL(file);
 }
 
 function confirmBillUpload(){
@@ -3904,6 +3951,7 @@ async function switchToHouse(code){
     // Switch state
     state=Object.assign({flatName:'The Red House CPH',roommates:[],swaps:{},cleaningDone:{},weekComments:{},holidays:{},tasks:[],expenses:[],goodnews:[],memberEvents:[],archivedExpenses:[],groupCode:null,bills:[]}, data);
     state.groupCode=code;
+    recomputeNextId();
     localStorage.setItem('rh_code',code);
     const saved=getKnownHouses().find(h=>h.code===code);
     if(saved){
